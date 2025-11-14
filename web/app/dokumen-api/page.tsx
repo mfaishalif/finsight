@@ -10,7 +10,7 @@ export default function Page() {
       <Header />
 
       {/* Hero */}
-      <section className="bg-gradient-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] py-20">
+      <section className="bg-linear-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] py-20">
         <div className="mx-auto max-w-4xl px-6 text-center">
           <h1 className="text-4xl font-extrabold text-[#f0c94e]">Dokumentasi API FinSight</h1>
           <p className="mt-4 text-[#d9d6bf]">
