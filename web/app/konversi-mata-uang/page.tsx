@@ -52,11 +52,11 @@ export default function PageKonversiMataUang() {
         </Link>
 
         <nav className="flex gap-8 text-sm font-medium">
-          <a href="#" className="hover:text-[#f0c94e]">Home Page</a>
-          <a href="#" className="hover:text-[#f0c94e]">Tentang</a>
-          <a href="#" className="hover:text-[#f0c94e]">Edukasi</a>
-          <a href="#" className="underline decoration-[#c9a93b] text-[#f0c94e]">Konversi Mata Uang</a>
-          <Link href="dokumen-api" className="hover:text-[#f0c94e]">Dokumentasi API</Link>
+          <Link href="/" className="hover:text-[#f0c94e]">Home Page</Link>
+          <Link href="/Tentang" className="hover:text-[#f0c94e]">Tentang</Link>
+          <Link href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</Link>
+          <Link href="/konversi-mata-uang" className="underline decoration-[#c9a93b] text-[#f0c94e]">Konversi Mata Uang</Link>
+          <Link href="/dokumen-api" className="hover:text-[#f0c94e]">Dokumentasi API</Link>
         </nav>
       </header>
 
@@ -197,9 +197,10 @@ export default function PageKonversiMataUang() {
           <div>
             <h3 className="font-semibold text-white mb-3">Platform</h3>
             <ul className="space-y-1">
-              <li><a href="#" className="hover:text-[#f0c94e]">Home Page</a></li>
-              <li><a href="#" className="hover:text-[#f0c94e]">Konversi Mata Uang</a></li>
-              <li><a href="#" className="hover:text-[#f0c94e]">Edukasi</a></li>
+              <li><a href="/" className="hover:text-[#f0c94e]">Home Page</a></li>
+              <li><a href="/Tentang" className="hover:text-[#f0c94e]">Tentang</a></li>
+              <li><a href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</a></li>
+              <li><a href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</a></li>
             </ul>
           </div>
 

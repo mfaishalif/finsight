@@ -18,10 +18,10 @@ export default function Page() {
         </Link>
 
         <nav className="flex gap-8 text-sm font-medium">
-          <a href="#" className="hover:text-[#f0c94e]">Home Page</a>
-          <a href="#" className="hover:text-[#f0c94e]">Tentang</a>
-          <a href="#" className="hover:text-[#f0c94e]">Edukasi</a>
-          <Link href="konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</Link>
+          <a href="/" className="hover:text-[#f0c94e]">Home Page</a>
+          <a href="/Tentang" className="hover:text-[#f0c94e]">Tentang</a>
+          <a href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</a>
+          <a href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</a>
           <a href="#" className="underline decoration-[#c9a93b] text-[#f0c94e]">Dokumentasi API</a>
         </nav>
       </header>
@@ -29,7 +29,7 @@ export default function Page() {
       {/* Hero */}
       <section className="bg-linear-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] py-20">
         <div className="mx-auto max-w-4xl px-6 text-center">
-          <h1 className="text-4xl font-extrabold text-[#f0c94e]">Dokumentasi API FinSight</h1>
+          <h1 className="text-4xl font-bold text-[#f0c94e]">Dokumentasi API FinSight</h1>
           <p className="mt-4 text-[#d9d6bf]">
             Gunakan API FinSight untuk mengakses data nilai tukar real-time, hasil prediksi berbasis AI, dan fitur konversi
             mata uang secara otomatis.
