@@ -1,0 +1,8 @@
+tensorflow[and-cuda]
+pandas
+numpy
+scikit-learn
+yfinance
+matplotlib
+fastapi
+uvicorn

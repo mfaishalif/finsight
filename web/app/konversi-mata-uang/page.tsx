@@ -70,7 +70,16 @@ export default function PageKonversiMataUang() {
               {/* Dropdown Dari */}
               <Select value={fromCurrency} onValueChange={setFromCurrency}>
                 <SelectTrigger className="bg-[#183A34] border-none text-white">
-                  <SelectValue placeholder="Dari" />
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={currencies.find(c => c.code === fromCurrency)?.flag || "/flags/us.svg"}
+                      alt={fromCurrency}
+                      width={20}
+                      height={15}
+                      className="rounded-sm"
+                    />
+                    <span>{fromCurrency}</span>
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   {currencies.map((currency) => (
@@ -101,7 +110,16 @@ export default function PageKonversiMataUang() {
               {/* Dropdown Ke */}
               <Select value={toCurrency} onValueChange={setToCurrency}>
                 <SelectTrigger className="bg-[#183A34] border-none text-white">
-                  <SelectValue placeholder="Ke" />
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={currencies.find(c => c.code === toCurrency)?.flag || "/flags/id.svg"}
+                      alt={toCurrency}
+                      width={20}
+                      height={15}
+                      className="rounded-sm"
+                    />
+                    <span>{toCurrency}</span>
+                  </div>
                 </SelectTrigger>
                 <SelectContent>
                   {currencies.map((currency) => (
