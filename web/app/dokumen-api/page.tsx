@@ -2,17 +2,34 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import Header from '@/components/layout/header';
+import { NavigationMenu } from "@/components/ui/navigation-menu";
 
 export default function Page() {
   return (
     <main className="min-h-screen bg-[#0f271f] text-[#ffffff]">
-      <Header />
+      {/* Header */}
+      {/* HEADER */}
+      <header className="flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-md bg-[#192f26] flex items-center justify-center">
+            <Image src="/logo-finsight.svg" alt="FinSight" width={26} height={26} />
+          </div>
+          <span className="font-semibold text-lg text-white">FinSight</span>
+        </Link>
+
+        <nav className="flex gap-8 text-sm font-medium">
+          <a href="/" className="hover:text-[#f0c94e]">Home Page</a>
+          <a href="/Tentang" className="hover:text-[#f0c94e]">Tentang</a>
+          <a href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</a>
+          <a href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</a>
+          <a href="#" className="underline decoration-[#c9a93b] text-[#f0c94e]">Dokumentasi API</a>
+        </nav>
+      </header>
 
       {/* Hero */}
       <section className="bg-linear-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] py-20">
         <div className="mx-auto max-w-4xl px-6 text-center">
-          <h1 className="text-4xl font-extrabold text-[#f0c94e]">Dokumentasi API FinSight</h1>
+          <h1 className="text-4xl font-bold text-[#f0c94e]">Dokumentasi API FinSight</h1>
           <p className="mt-4 text-[#d9d6bf]">
             Gunakan API FinSight untuk mengakses data nilai tukar real-time, hasil prediksi berbasis AI, dan fitur konversi
             mata uang secara otomatis.

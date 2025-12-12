@@ -9,8 +9,8 @@ const Header = () => {
   const pathname = usePathname();
   const navLinks = [
     { href: "/", text: "Home Page" },
-    { href: "#", text: "Tentang" },
-    { href: "#", text: "Edukasi" },
+    { href: "/Tentang", text: "Tentang" },
+    { href: "/Edukasi", text: "Edukasi" },
     { href: "/konversi-mata-uang", text: "Konversi Mata Uang" },
     { href: "/dokumen-api", text: "Dokumentasi API" },
   ];

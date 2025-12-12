@@ -320,7 +320,7 @@ const Footer = () => {
   const platformLinks = [
     { href: "#", text: "Home Page" },
     { href: "/konversi-mata-uang", text: "Konversi Mata Uang" },
-    { href: "#", text: "Edukasi" },
+    { href: "/Edukasi", text: "Edukasi" },
   ];
   const supportLinks = [
     { href: "/dokumen-api", text: "Dokumentasi" },
