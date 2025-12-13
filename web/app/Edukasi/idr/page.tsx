@@ -142,7 +142,7 @@ function Navbar() {
 
       <nav className="flex gap-4 sm:gap-8 text-xs sm:text-sm font-medium">
         <Link href="/" className="hover:text-[#f0c94e]">Home Page</Link>
-        <Link href="/Tentang" className="hover:text-[#f0c94e] hidden md:inline">Tentang</Link>
+        <Link href="/tentang" className="hover:text-[#f0c94e] hidden md:inline">Tentang</Link>
         <Link href="/Edukasi" className="underline decoration-[#c9a93b] text-[#f0c94e]">Edukasi</Link>
         <Link href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</Link>
         <Link href="/dokumen-api" className="hover:text-[#f0c94e] hidden md:inline">Dokumentasi API</Link>

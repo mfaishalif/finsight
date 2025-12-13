@@ -51,7 +51,7 @@ function Navbar() {
 
       <nav className="flex gap-8 text-sm font-medium">
         <Link href="/" className="hover:text-[#f0c94e]">Home Page</Link>
-        <Link href="/Tentang" className="hover:text-[#f0c94e]">Tentang</Link>
+        <Link href="/tentang" className="hover:text-[#f0c94e]">Tentang</Link>
         <Link href="/Edukasi" className="underline decoration-[#c9a93b] text-[#f0c94e]">Edukasi</Link>
         <Link href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</Link>
         <Link href="/dokumen-api" className="hover:text-[#f0c94e]">Dokumentasi API</Link>
@@ -147,7 +147,7 @@ export default function EdukasiPage() {
     setSelectedRegion(queryRegion);
   }, [searchParams]);
 
- 
+
   useEffect(() => {
     const params = new URLSearchParams();
     if (searchTerm) params.set("search", searchTerm);
@@ -254,7 +254,7 @@ export default function EdukasiPage() {
           {showMore && (
             <div className="text-center mt-8">
               <Button onClick={() => setShowMore(false)} variant="link" className="text-white/60 hover:text-white text-sm">
-                Sembunyikan 
+                Sembunyikan
               </Button>
             </div>
           )}
