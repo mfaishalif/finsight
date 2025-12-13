@@ -9,7 +9,6 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { RefreshCcw } from "lucide-react"
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 import Image from "next/image"
-import Header from '@/components/layout/header'; // Added import
 
 const data = [
   { name: "6h ago", rate: 0.918 },
@@ -43,7 +42,23 @@ export default function PageKonversiMataUang() {
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0B221E] text-white">
-      <Header /> {/* Replaced hardcoded header with Header component */}
+      {/* HEADER */}
+      <header className="flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-md bg-[#192f26] flex items-center justify-center">
+            <Image src="/logo-finsight.svg" alt="FinSight" width={26} height={26} />
+          </div>
+          <span className="font-semibold text-lg text-white">FinSight</span>
+        </Link>
+
+        <nav className="flex gap-8 text-sm font-medium">
+          <Link href="/" className="hover:text-[#f0c94e]">Home Page</Link>
+          <Link href="/Tentang" className="hover:text-[#f0c94e]">Tentang</Link>
+          <Link href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</Link>
+          <Link href="/konversi-mata-uang" className="underline decoration-[#c9a93b] text-[#f0c94e]">Konversi Mata Uang</Link>
+          <Link href="/dokumen-api" className="hover:text-[#f0c94e]">Dokumentasi API</Link>
+        </nav>
+      </header>
 
       {/* MAIN CONTENT */}
       <main className="flex-1 px-6 md:px-16 py-16">
@@ -200,9 +215,10 @@ export default function PageKonversiMataUang() {
           <div>
             <h3 className="font-semibold text-white mb-3">Platform</h3>
             <ul className="space-y-1">
-              <li><a href="#" className="hover:text-[#f0c94e]">Home Page</a></li>
-              <li><a href="#" className="hover:text-[#f0c94e]">Konversi Mata Uang</a></li>
-              <li><a href="#" className="hover:text-[#f0c94e]">Edukasi</a></li>
+              <li><a href="/" className="hover:text-[#f0c94e]">Home Page</a></li>
+              <li><a href="/Tentang" className="hover:text-[#f0c94e]">Tentang</a></li>
+              <li><a href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</a></li>
+              <li><a href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</a></li>
             </ul>
           </div>
 
