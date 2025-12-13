@@ -1,7 +1,7 @@
 // app/page.tsx
 import React from "react";
 import Link from "next/link";
-import Image from "next/image"; 
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -29,7 +29,7 @@ function Navbar() {
 
       <nav className="flex gap-8 text-sm font-medium">
         <Link href="/" className="hover:text-[#f0c94e]">Home Page</Link>
-        <Link href="/Tentang" className="underline decoration-[#c9a93b] text-[#f0c94e]">Tentang</Link>
+        <Link href="/tentang" className="underline decoration-[#c9a93b] text-[#f0c94e]">Tentang</Link>
         <Link href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</Link>
         <Link href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</Link>
         <Link href="/dokumen-api" className="hover:text-[#f0c94e]">Dokumentasi API</Link>
@@ -133,7 +133,7 @@ export default function TentangPage() {
       <section className="relative flex flex-col items-center justify-center text-center py-28 px-4 md:py-40 bg-linear-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19]">
         {/* Efek gradient overlay (opsional, mirip dengan style 1 tapi disesuaikan) */}
         <div className="absolute inset-0 z-0 opacity-20" style={{
-            backgroundImage: `radial-gradient(at 50% 50%, #0c0c0c 0%, transparent 70%)`,
+          backgroundImage: `radial-gradient(at 50% 50%, #0c0c0c 0%, transparent 70%)`,
         }}></div>
         <div className="relative z-10 max-w-3xl">
           <h1 className="text-4xl md:text-5xl font-bold mb-6 text-[#f0c94e]">
@@ -147,40 +147,40 @@ export default function TentangPage() {
       </section>
 
 
-{/* Visi & Misi Section */}
-<section className="bg-[#0f271f] py-16 px-4">
-  <div className="container mx-auto">
-    <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-[#f0c94e]">
-      Visi & Misi Kami
-    </h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-      {/* CARD VISI - DITAMBAHKAN border-4 dan border-[#f0c94e] */}
-      <Card className="bg-[#10261e] border-1 border-[#f0c94e] text-[#dfe7d6] p-6 flex flex-col items-start shadow-lg">
-        <CardHeader className="p-0 mb-4">
-          <div className="bg-[#f0c94e] p-3 rounded-full mb-3 text-black">
-            <Eye size={24} /> {/* Icon for Visi */}
+      {/* Visi & Misi Section */}
+      <section className="bg-[#0f271f] py-16 px-4">
+        <div className="container mx-auto">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 text-[#f0c94e]">
+            Visi & Misi Kami
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {/* CARD VISI - DITAMBAHKAN border-4 dan border-[#f0c94e] */}
+            <Card className="bg-[#10261e] border-1 border-[#f0c94e] text-[#dfe7d6] p-6 flex flex-col items-start shadow-lg">
+              <CardHeader className="p-0 mb-4">
+                <div className="bg-[#f0c94e] p-3 rounded-full mb-3 text-black">
+                  <Eye size={24} /> {/* Icon for Visi */}
+                </div>
+                <CardTitle className="text-2xl font-semibold text-[#f0c94e]">Visi</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 text-[#dfe7d6]">
+                Menjadi platform unggulan dalam prediksi nilai tukar berbasis AI yang terpercaya dan mudah digunakan oleh siapa pun di seluruh dunia.
+              </CardContent>
+            </Card>
+            {/* CARD MISI - DITAMBAHKAN border-4 dan border-[#f0c94e] */}
+            <Card className="bg-[#10261e] border-1 border-[#f0c94e] text-[#dfe7d6] p-6 flex flex-col items-start shadow-lg">
+              <CardHeader className="p-0 mb-4">
+                <div className="bg-[#f0c94e] p-3 rounded-full mb-3 text-black">
+                  <Target size={24} /> {/* Icon for Misi */}
+                </div>
+                <CardTitle className="text-2xl font-semibold text-[#f0c94e]">Misi</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 text-[#dfe7d6]">
+                Memberikan akses data nilai tukar yang akurat, edukasi finansial yang relevan, serta alat konversi cerdas untuk membantu pengguna membuat keputusan ekonomi yang lebih baik.
+              </CardContent>
+            </Card>
           </div>
-          <CardTitle className="text-2xl font-semibold text-[#f0c94e]">Visi</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0 text-[#dfe7d6]">
-          Menjadi platform unggulan dalam prediksi nilai tukar berbasis AI yang terpercaya dan mudah digunakan oleh siapa pun di seluruh dunia.
-        </CardContent>
-      </Card>
-      {/* CARD MISI - DITAMBAHKAN border-4 dan border-[#f0c94e] */}
-      <Card className="bg-[#10261e] border-1 border-[#f0c94e] text-[#dfe7d6] p-6 flex flex-col items-start shadow-lg">
-        <CardHeader className="p-0 mb-4">
-          <div className="bg-[#f0c94e] p-3 rounded-full mb-3 text-black">
-            <Target size={24} /> {/* Icon for Misi */}
-          </div>
-          <CardTitle className="text-2xl font-semibold text-[#f0c94e]">Misi</CardTitle>
-        </CardHeader>
-        <CardContent className="p-0 text-[#dfe7d6]">
-          Memberikan akses data nilai tukar yang akurat, edukasi finansial yang relevan, serta alat konversi cerdas untuk membantu pengguna membuat keputusan ekonomi yang lebih baik.
-        </CardContent>
-      </Card>
-    </div>
-  </div>
-</section>
+        </div>
+      </section>
 
       {/* Teknologi yang Kami Gunakan Section */}
       <section className="bg-[#0f1f19] py-16 px-4">
@@ -225,7 +225,7 @@ export default function TentangPage() {
           <p className="text-lg text-[#d9d6bf] mb-8">
             Temukan wawasan dan edukasi nilai tukar terbaik untuk keputusan finansial yang lebih cerdas.
           </p>
-          <Link href= "/konversi-mata-uang" className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90 text-lg px-8 py-3 rounded-md transition-colors font-semibold">
+          <Link href="/konversi-mata-uang" className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90 text-lg px-8 py-3 rounded-md transition-colors font-semibold">
             Mulai Sekarang
           </Link>
         </div>

@@ -142,7 +142,7 @@ function Navbar() {
 
       <nav className="flex gap-4 sm:gap-8 text-xs sm:text-sm font-medium">
         <Link href="/" className="hover:text-[#f0c94e]">Home Page</Link>
-        <Link href="/Tentang" className="hover:text-[#f0c94e] hidden md:inline">Tentang</Link>
+        <Link href="/tentang" className="hover:text-[#f0c94e] hidden md:inline">Tentang</Link>
         <Link href="/Edukasi" className="underline decoration-[#c9a93b] text-[#f0c94e]">Edukasi</Link>
         <Link href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</Link>
         <Link href="/dokumen-api" className="hover:text-[#f0c94e] hidden md:inline">Dokumentasi API</Link>
@@ -267,16 +267,16 @@ const currencyDetails = {
     flag: "/flags/in.png",
     country: "India",
     paperNotes: [
-        { value: "10", image: "/currencies/in/10rupee.jpg" },
-        { value: "20", image: "/currencies/in/20rupee.jpg" },
-        { value: "50", image: "/currencies/in/50rupee.jpg" },
-        { value: "100", image: "/currencies/in/100rupee.jpg" },
-        { value: "200", image: "/currencies/in/200rupee.jpg" },
-        { value: "500", image: "/currencies/in/500rupee.jpg" },
+      { value: "10", image: "/currencies/in/10rupee.jpg" },
+      { value: "20", image: "/currencies/in/20rupee.jpg" },
+      { value: "50", image: "/currencies/in/50rupee.jpg" },
+      { value: "100", image: "/currencies/in/100rupee.jpg" },
+      { value: "200", image: "/currencies/in/200rupee.jpg" },
+      { value: "500", image: "/currencies/in/500rupee.jpg" },
 
     ],
     coins: [
-      
+
     ],
   },
 };

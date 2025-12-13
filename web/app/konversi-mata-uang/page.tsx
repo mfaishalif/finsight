@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link";
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,13 +32,70 @@ const currencies = [
 export default function PageKonversiMataUang() {
   const [fromCurrency, setFromCurrency] = useState("USD")
   const [toCurrency, setToCurrency] = useState("IDR")
-  const [amount, setAmount] = useState(1)
-  const [result, setResult] = useState(16551.8)
+  const [amount, setAmount] = useState<number | "">("")
+  const [result, setResult] = useState<number | null>(null) // Initialize as null
+  const [loading, setLoading] = useState(false)
+  const [timestamp, setTimestamp] = useState<string>("")
+  const [error, setError] = useState<string>("")
 
-  const handleConvert = () => {
-    // simulasi perhitungan sederhana
-    setResult(parseFloat((Math.random() * (17000 - 16000) + 16000).toFixed(2)))
+  // Chart state
+  const [chartData, setChartData] = useState<any[]>([])
+  const [range, setRange] = useState("1mo")
+
+  // Fetch chart data on currency change
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await fetch(`/api/history?from=${fromCurrency}&to=${toCurrency}&range=${range}`)
+        const data = await res.json()
+        if (data.data) {
+          // Formatting for recharts: "name" (date) and "rate"
+          const formatted = data.data.map((item: any) => ({
+            name: new Date(item.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
+            rate: item.rate
+          }))
+          setChartData(formatted)
+        }
+      } catch (err) {
+        console.error("Failed to load chart data", err)
+      }
+    }
+    fetchHistory()
+  }, [fromCurrency, toCurrency, range])
+
+  const handleConvert = async () => {
+    if (!amount) {
+      setError("Masukkan jumlah uang")
+      return
+    }
+
+    setLoading(true)
+    setError("")
+    setResult(null)
+
+    try {
+      const response = await fetch(`/api/conversion?from=${fromCurrency}&to=${toCurrency}&amount=${amount}`)
+      if (!response.ok) {
+        throw new Error("Gagal mengambil data konversi")
+      }
+      const data = await response.json()
+
+      if (data.error) {
+        throw new Error(data.error)
+      }
+
+      setResult(data.convertedAmount)
+      setTimestamp(data.timestamp)
+    } catch (err: any) {
+      console.error(err)
+      setError(err.message || "Terjadi kesalahan")
+    } finally {
+      setLoading(false)
+    }
   }
+
+  // Initial load? No, let user trigger it. Or trigger once?
+  // Let's keep it manual trigger for now as per design.
 
   return (
     <div className="min-h-screen flex flex-col bg-[#0B221E] text-white">
@@ -53,7 +110,7 @@ export default function PageKonversiMataUang() {
 
         <nav className="flex gap-8 text-sm font-medium">
           <Link href="/" className="hover:text-[#f0c94e]">Home Page</Link>
-          <Link href="/Tentang" className="hover:text-[#f0c94e]">Tentang</Link>
+          <Link href="/tentang" className="hover:text-[#f0c94e]">Tentang</Link>
           <Link href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</Link>
           <Link href="/konversi-mata-uang" className="underline decoration-[#c9a93b] text-[#f0c94e]">Konversi Mata Uang</Link>
           <Link href="/dokumen-api" className="hover:text-[#f0c94e]">Dokumentasi API</Link>
@@ -77,7 +134,7 @@ export default function PageKonversiMataUang() {
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-semibold">Konversi Sekarang!</h3>
               <Button variant="ghost" size="icon" className="text-[#f0c94e] hover:bg-[#f0c94e]/10">
-                <RefreshCcw />
+                <RefreshCcw className={loading ? "animate-spin" : ""} />
               </Button>
             </div>
 
@@ -117,8 +174,9 @@ export default function PageKonversiMataUang() {
               {/* Input Jumlah */}
               <Input
                 type="number"
+                placeholder="Jumlah"
                 value={amount}
-                onChange={(e) => setAmount(Number(e.target.value))}
+                onChange={(e) => setAmount(e.target.value === "" ? "" : Number(e.target.value))}
                 className="bg-[#183A34] border-none text-white"
               />
 
@@ -155,25 +213,32 @@ export default function PageKonversiMataUang() {
               </Select>
 
               {/* Hasil Konversi */}
-              <div className="bg-[#183A34] py-2 px-4 rounded-md text-center font-semibold">
-                {result}
+              <div className="bg-[#183A34] py-2 px-4 rounded-md text-center font-semibold min-h-[40px] flex items-center justify-center">
+                {loading ? "..." : result !== null ? new Intl.NumberFormat('id-ID', { maximumFractionDigits: 2 }).format(result) : "-"}
               </div>
             </div>
 
-            <div className="mt-4 text-center text-[#f0c94e] font-semibold">
-              {amount} {fromCurrency} = {result} {toCurrency}
+            {error && (
+              <div className="text-red-400 text-center mt-2 text-sm">{error}</div>
+            )}
+
+            <div className="mt-4 text-center text-[#f0c94e] font-semibold min-h-[24px]">
+              {result !== null && !loading ? (
+                `${amount} ${fromCurrency} = ${new Intl.NumberFormat('id-ID', { style: 'currency', currency: toCurrency }).format(result)}`
+              ) : ""}
             </div>
 
             <p className="text-center text-gray-400 text-sm mt-1">
-              Data diperbarui pada 8 Oktober, 11:10 GMT+7
+              {timestamp ? `Data diperbarui pada ${new Date(timestamp).toLocaleString('id-ID')}` : "Masukkan Jumlah Uang untuk Melihat Konversi"}
             </p>
 
             <div className="text-center mt-6">
               <Button
                 onClick={handleConvert}
-                className="bg-[#f0c94e] text-black font-semibold hover:bg-[#d4b43a]"
+                disabled={loading}
+                className="bg-[#f0c94e] text-black font-semibold hover:bg-[#d4b43a] disabled:opacity-50"
               >
-                Konversikan
+                {loading ? "Memproses..." : "Konversikan"}
               </Button>
             </div>
           </CardContent>
@@ -181,16 +246,39 @@ export default function PageKonversiMataUang() {
 
         {/* HISTORI */}
         <section className="mt-16 text-center">
-          <h3 className="text-2xl font-semibold mb-6 text-[#F9FAE0]">Histori Mata Uang</h3>
+          <div className="flex items-center justify-between max-w-3xl mx-auto mb-6">
+            <h3 className="text-2xl font-semibold text-[#F9FAE0]">Histori Mata Uang ({fromCurrency} - {toCurrency})</h3>
+            <div className="flex bg-[#102E2A] p-1 rounded-lg gap-1">
+              {["1w", "1mo", "3mo", "6mo", "1y"].map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setRange(r)}
+                  className={`px-3 py-1 text-xs rounded-md transition-colors ${range === r ? "bg-[#f0c94e] text-black font-bold" : "text-gray-400 hover:text-white"}`}
+                >
+                  {r.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="bg-[#102E2A] p-4 rounded-xl max-w-3xl mx-auto">
-            <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={data}>
-                <XAxis dataKey="name" stroke="#aaa" />
-                <YAxis stroke="#aaa" />
-                <Tooltip />
-                <Line type="monotone" dataKey="rate" stroke="#f0c94e" strokeWidth={2} dot />
-              </LineChart>
-            </ResponsiveContainer>
+            {chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart data={chartData}>
+                  <XAxis dataKey="name" stroke="#aaa" fontSize={12} tickMargin={10} minTickGap={30} />
+                  <YAxis stroke="#aaa" fontSize={12} domain={['auto', 'auto']} tickFormatter={(val) => val.toLocaleString('id-ID')} />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: '#183A34', border: 'none', color: '#fff' }}
+                    itemStyle={{ color: '#f0c94e' }}
+                    labelStyle={{ color: '#ccc' }}
+                  />
+                  <Line type="monotone" dataKey="rate" stroke="#f0c94e" strokeWidth={2} dot={false} />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="h-[250px] flex items-center justify-center text-gray-500">
+                Memuat data grafik...
+              </div>
+            )}
           </div>
         </section>
       </main>
@@ -201,11 +289,11 @@ export default function PageKonversiMataUang() {
           <div>
             <div className="flex items-center gap-2 mb-3">
               <Image
-              src="/logo-finsight.svg"
-              alt="FinSight Logo"
-              width={32}
-              height={32}
-              className="rounded-md"
+                src="/logo-finsight.svg"
+                alt="FinSight Logo"
+                width={32}
+                height={32}
+                className="rounded-md"
               />
               <h2 className="font-semibold text-white">FinSight</h2>
             </div>
@@ -216,7 +304,7 @@ export default function PageKonversiMataUang() {
             <h3 className="font-semibold text-white mb-3">Platform</h3>
             <ul className="space-y-1">
               <li><a href="/" className="hover:text-[#f0c94e]">Home Page</a></li>
-              <li><a href="/Tentang" className="hover:text-[#f0c94e]">Tentang</a></li>
+              <li><a href="/tentang" className="hover:text-[#f0c94e]">Tentang</a></li>
               <li><a href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</a></li>
               <li><a href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</a></li>
             </ul>
@@ -227,8 +315,8 @@ export default function PageKonversiMataUang() {
             <h3 className="font-semibold text-white mb-3">Tentang Kami</h3>
             <ul className="space-y-1">
               <li className="flex items-center gap-2">
-              <Image src="/icons/email.svg" alt="Email" width={18} height={18} />
-              <span>finsight@gmail.com</span>
+                <Image src="/icons/email.svg" alt="Email" width={18} height={18} />
+                <span>finsight@gmail.com</span>
               </li>
               <li className="flex items-center gap-2">
                 <Image src="/icons/instagram.svg" alt="Instagram" width={18} height={18} />
