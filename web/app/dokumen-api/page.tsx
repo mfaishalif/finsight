@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -51,11 +53,23 @@ export default function Page() {
             mata uang secara otomatis.
           </p>
           <div className="mt-8 flex gap-4 justify-center">
-            <a href="#introduction">
-              <Button className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90">
-                Lihat Panduan Cepat
-              </Button>
-            </a>
+            <Button
+              className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90"
+              onClick={() => {
+                const element = document.getElementById("introduction");
+                if (element) {
+                  const headerOffset = 145
+                  const elementPosition = element.getBoundingClientRect().top;
+                  const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                  window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                  });
+                }
+              }}
+            >
+              Lihat Panduan Cepat
+            </Button>
 
             <Dialog>
               <DialogTrigger asChild>
