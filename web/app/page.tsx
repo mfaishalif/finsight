@@ -76,23 +76,23 @@ const miniChartConfig = {
 const HeroSection = () => {
   const CURRENCY_FROM = "USD";
   const CURRENCY_TO = "IDR";
-  const PREDICTED_PRICE_CHANGE_PERCENTAGE = "+1.15%"; 
+  const PREDICTED_PRICE_CHANGE_PERCENTAGE = "+1.15%";
 
-  return ( 
-    <section className="container mx-auto max-w-7xl px-6 py-16 sm:py-24">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+  return (
+    <section className="bg-linear-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] py-16 sm:py-24">
+      <div className="container mx-auto max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="flex flex-col gap-6">
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
             Empower Your Decision with <span className="text-[#f0c94e]">AI Exchange Forecasting</span>
           </h1>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg text-[#d9d6bf]">
             Prediksi pergerakan nilai tukar mata uang dengan akurasi tinggi menggunakan teknologi AI terdepan kami.
           </p>
-          <Card className="p-6 bg-[#102E2A] border-none text-white">
+          <Card className="p-6 bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] text-white">
             <CardContent className="p-0 flex flex-col gap-6">
               <div className="flex flex-wrap items-end gap-4">
                 <div>
-                  <span className="text-sm font-medium text-muted-foreground">Pilih Negara</span>
+                  <span className="text-sm font-medium text-[#f0c94e]">Pilih Negara</span>
                   <div className="flex items-center gap-2 mt-1">
                     <Select defaultValue={CURRENCY_FROM}>
                       <SelectTrigger className="w-[100px]">
@@ -116,7 +116,7 @@ const HeroSection = () => {
                   </div>
                 </div>
                 <div>
-                  <span className="text-sm font-medium text-muted-foreground">Periode Waktu</span>
+                  <span className="text-sm font-medium text-[#f0c94e]">Periode Waktu</span>
                   <ToggleGroup type="single" defaultValue="7" variant="outline" className="mt-1">
                     <ToggleGroupItem value="3">3 Hari</ToggleGroupItem>
                     <ToggleGroupItem value="7">7 Hari</ToggleGroupItem>
@@ -126,11 +126,11 @@ const HeroSection = () => {
               </div>
               <div className="flex flex-wrap gap-8">
                 <div>
-                  <p className="text-sm text-muted-foreground">Harga ({CURRENCY_TO})</p>
+                  <p className="text-sm text-[#f0c94e]">Harga ({CURRENCY_TO})</p>
                   <p className="text-2xl font-semibold">16,551.50</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Prediksi ({CURRENCY_TO})</p>
+                  <p className="text-sm text-[#f0c94e]">Prediksi ({CURRENCY_TO})</p>
                   <div className="flex items-center gap-2">
                     <p className="text-2xl font-semibold">16,570.00</p>
                     <Badge variant="outline" className="border-green-500/50 bg-green-500/10 text-green-400 flex items-center gap-1">
@@ -143,41 +143,41 @@ const HeroSection = () => {
             </CardContent>
           </Card>
           <div className="mt-2">
-            <Button size="lg" variant="default" className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/10">
+            <Button size="lg" variant="default" className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90">
               Lihat Prediksi <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>
-        <Card className="bg-[#102E2A] border-none rounded-xl p-6 text-white h-[250px]">
+        <Card className="bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] rounded-xl p-6 text-white h-[250px]">
           <div className="w-full h-full">
             <ChartContainer config={miniChartConfig} className="w-full h-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={miniChartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                <defs>
-                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--color-value)" stopOpacity={0.8}/>
-                    <stop offset="95%" stopColor="var(--color-value)" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fill: 'white', fontSize: 12 }} />
-                <YAxis
-                  tickLine={false}
-                  axisLine={false}
-                  tickMargin={8}
-                  tickFormatter={(value) => `Rp${(Number(value) / 1000).toFixed(2)}k`}
-                  domain={['dataMin - 100', 'dataMax + 100']}
-                  tick={{ fill: 'white', fontSize: 12 }}
-                />
-                <ShadcnChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent indicator="dot" />}
-                  formatter={(value) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value as number)}
-                />
-                <Area type="monotone" dataKey="value" stroke="var(--color-value)" fill="url(#colorValue)" strokeWidth={2} />
-              </AreaChart>
-            </ResponsiveContainer>
-          </ChartContainer>
-        </div>
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={miniChartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+                  <defs>
+                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="var(--color-value)" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="var(--color-value)" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fill: 'white', fontSize: 12 }} />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={(value) => `Rp${(Number(value) / 1000).toFixed(2)}k`}
+                    domain={['dataMin - 100', 'dataMax + 100']}
+                    tick={{ fill: 'white', fontSize: 12 }}
+                  />
+                  <ShadcnChartTooltip
+                    cursor={false}
+                    content={<ChartTooltipContent indicator="dot" />}
+                    formatter={(value) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value as number)}
+                  />
+                  <Area type="monotone" dataKey="value" stroke="var(--color-value)" fill="url(#colorValue)" strokeWidth={2} />
+                </AreaChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </div>
         </Card>
       </div>
     </section>
@@ -193,7 +193,7 @@ const VisualizationTabs = () => {
           Bandingkan data historis dan prediksi untuk memahami pergerakan pasar dengan lebih baik.
         </p>
       </div>
-      <Card className="bg-[#102E2A] border-none rounded-xl px-6 pt-8 pb-8 text-white">
+      <Card className="bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] rounded-xl px-6 pt-8 pb-8 text-white">
         <CardHeader className="flex flex-col items-center p-0">
           <Tabs defaultValue="historical" className="w-full max-w-md">
             <TabsList className="grid w-full grid-cols-2">
@@ -273,45 +273,81 @@ const VisualizationTabs = () => {
 };
 
 const ExportCard = () => {
+  const handleExport = () => {
+    // 1. Header Row
+    const headers = ["Date", "Historical Price (IDR)", "Prediction Price (IDR)"];
+
+    // 2. Data Rows
+    const rows = mainChartData.map(item => [
+      item.date,
+      item.historical !== null ? item.historical : "",
+      item.prediction !== null ? item.prediction : ""
+    ]);
+
+    // 3. Combine
+    const csvContent = [
+      headers.join(","),
+      ...rows.map(e => e.join(","))
+    ].join("\n");
+
+    // 4. Create Blob and Download
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "finsight_export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <section className="container mx-auto px-4 py-16 sm:py-24">
-      <Card className="text-center bg-[#102E2A] border-none rounded-xl px-6 pt-8 pb-8 text-white max-w-5xl mx-auto">
-        <CardHeader>
-          <div className="mx-auto bg-primary/10 rounded-full p-3 w-fit">
-            <FileCog className="h-8 w-8 text-primary" />
-          </div>
-        </CardHeader>
-        <CardContent className="flex flex-col items-center gap-4">
-          <CardTitle className="text-2xl font-bold">Fungsionalitas Ekspor Data</CardTitle>
-          <p className="text-gray-300 max-w-md">
-            Ekspor hasil analisis dan prediksi Anda dalam format Excel atau CSV untuk laporan atau analisis lebih lanjut.
-          </p>
-          <Button variant="default" className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/10">
-            <Download className="mr-2 h-4 w-4" />
-            Ekspor Data
-          </Button>
-        </CardContent>
-      </Card>
+    <section className="bg-[#0c1814] py-16 sm:py-24">
+      <div className="container mx-auto px-4">
+        <Card className="text-center bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] rounded-xl px-6 pt-8 pb-8 text-white max-w-5xl mx-auto">
+          <CardHeader>
+            <div className="mx-auto bg-[#f0c94e]/10 rounded-full p-3 w-fit">
+              <FileCog className="h-8 w-8 text-[#f0c94e]" />
+            </div>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center gap-4">
+            <CardTitle className="text-2xl font-bold">Fungsionalitas Ekspor Data</CardTitle>
+            <p className="text-gray-300 max-w-md">
+              Ekspor hasil analisis dan prediksi Anda dalam format CSV untuk laporan atau analisis lebih lanjut.
+            </p>
+            <Button
+              variant="default"
+              className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90"
+              onClick={handleExport}
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Ekspor Data (CSV)
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </section>
   );
 };
 
 const LearnMoreCard = () => {
   return (
-    <section className="container mx-auto px-6 pb-16 sm:pb-24">
-        <Card className="bg-[#102E2A] border-none rounded-xl px-6 pt-8 pb-8 text-white max-w-5xl mx-auto">
-            <CardContent className="p-0">
-                <div className="relative z-10 text-center">
-                    <h3 className="text-2xl font-bold">Pelajari Bagaimana AI Mengubah Analisis Finansial</h3>
-                    <p className="mt-2 text-gray-300 max-w-2xl mx-auto">
-                        Temukan teknologi deep learning di balik prediksi kami dan bagaimana Anda dapat memanfaatkannya untuk keuntungan strategis.
-                    </p>
-                    <Button variant="default" className="mt-4 px-0 bg-[#f0c94e] text-black hover:bg-[#f0c94e]/10">
-                        Baca Selengkapnya <ArrowRight className="ml-2 h-4 w-4" />
-                    </Button>
-                </div>
-            </CardContent>
-        </Card>
+    <section className="container mx-auto px-6 py-16 sm:py-24">
+      <Card className="bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] rounded-xl px-6 pt-8 pb-8 text-white max-w-5xl mx-auto">
+        <CardContent className="p-0">
+          <div className="relative z-10 text-center">
+            <h3 className="text-2xl font-bold">Pelajari Bagaimana AI Mengubah Analisis Finansial</h3>
+            <p className="mt-2 text-gray-300 max-w-2xl mx-auto">
+              Temukan teknologi deep learning di balik prediksi kami dan bagaimana Anda dapat memanfaatkannya untuk keuntungan strategis.
+            </p>
+            <Link href="/tentang">
+              <Button variant="default" className="mt-4 px-0 bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90">
+                Baca Selengkapnya <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     </section>
   );
 };

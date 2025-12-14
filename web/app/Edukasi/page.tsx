@@ -41,7 +41,7 @@ const additionalCurrencies = [
 
 function Navbar() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm text-white">
+    <header className="sticky top-0 z-50 flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm text-white">
       <Link href="/" className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-md bg-[#192f26] flex items-center justify-center">
           <Image src="/logo-finsight.svg" alt="FinSight" width={26} height={26} />
@@ -176,19 +176,19 @@ export default function EdukasiPage() {
     <main className="min-h-screen bg-[#1f3a32] text-[#ffffff]">
       <Navbar />
 
-      <section className="relative flex flex-col items-center justify-center text-center py-28 px-4 md:py-40 bg-gradient-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19]">
+      <section className="relative flex flex-col items-center justify-center text-center py-16 px-4 md:py-20 bg-gradient-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19]">
         <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: `radial-gradient(at 50% 50%, #1e2e26 0%, transparent 70%)` }}></div>
 
         <div className="relative z-10 max-w-3xl">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 text-[#f0c94e]">
+          <h1 className="text-3xl md:text-4xl font-bold mb-4 text-[#f0c94e]">
             Kenali dan Pelajari Berbagai Mata Uang Dunia!
           </h1>
-          <p className="text-lg md:text-xl text-[#d9d6bf]">
+          <p className="text-base md:text-lg text-[#d9d6bf]">
             Tingkatkan wawasan Anda tentang mata uang global—mulai dari simbol, kode ISO, hingga fakta menarik di baliknya.
           </p>
         </div>
 
-        <div className="bg-[#1a2d27] border border-[#D4AF37]/40 rounded-xl p-6 mt-12 container mx-auto max-w-6xl z-10">
+        <div className="bg-[#1a2d27] border border-[#D4AF37]/40 rounded-xl p-6 mt-8 container mx-auto max-w-6xl z-10">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-[#D4AF37]" size={15} />

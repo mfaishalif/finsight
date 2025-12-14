@@ -18,7 +18,7 @@ import {
 // Komponen Navigasi (diambil dari style kedua)
 function Navbar() {
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm text-white">
+    <header className="sticky top-0 z-50 flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm text-white">
       <Link href="/" className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-md bg-[#192f26] flex items-center justify-center">
           {/* Pastikan /logo-finsight.svg ada di folder /public */}
@@ -212,6 +212,68 @@ export default function TentangPage() {
               title="User-Friendly Design"
               description="Tampilan elegan dan responsif."
             />
+          </div>
+        </div>
+      </section>
+
+      {/* API Section */}
+      <section className="bg-[#0c1814] py-16 px-4">
+        <div className="container mx-auto">
+          <div className="flex flex-col md:flex-row items-center gap-12 max-w-5xl mx-auto">
+            <div className="flex-1">
+              <div className="bg-[#f0c94e]/10 p-4 rounded-full w-fit mb-6 text-[#f0c94e]">
+                <Activity size={40} />
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-[#f0c94e]">
+                FinSight Developer API
+              </h2>
+              <p className="text-lg text-[#d9d6bf] mb-6 leading-relaxed">
+                Ingin mengintegrasikan data nilai tukar dan prediksi AI kami ke dalam aplikasi Anda?
+                API FinSight dirancang untuk para pengembang yang membutuhkan data finansial yang akurat, cepat, dan mudah diakses.
+              </p>
+              <ul className="space-y-3 mb-8 text-[#dfe7d6]">
+                <li className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#f0c94e]"></div>
+                  <span>Akses Data Konversi Real-Time</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#f0c94e]"></div>
+                  <span>Data Historis Lengkap</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#f0c94e]"></div>
+                  <span>Prediksi Berbasis AI</span>
+                </li>
+              </ul>
+              <Link href="/dokumen-api">
+                <Button variant="default" className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90 mb-10 md:mb-0">
+                  Lihat Dokumentasi API
+                </Button>
+              </Link>
+            </div>
+
+            <div className="flex-1 w-full relative">
+              <div className="bg-[#0f1f19] border border-[#163125] rounded-xl p-6 shadow-2xl">
+                <div className="flex items-center gap-2 mb-4 border-b border-[#25463b] pb-4">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                  </div>
+                  <div className="text-xs text-gray-400 font-mono ml-2">api-example.js</div>
+                </div>
+                <pre className="font-mono text-xs text-green-400 overflow-x-auto p-2 bg-[#081613] rounded">
+                  {`const response = await fetch('https://finsight.com/api/prediction', {
+  headers: {
+    'x-api-key': 'YOUR_API_KEY'
+  }
+});
+
+const data = await response.json();
+console.log(data.prediction);`}
+                </pre>
+              </div>
+            </div>
           </div>
         </div>
       </section>
