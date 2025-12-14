@@ -15,7 +15,7 @@ const Header = () => {
     { href: "/dokumen-api", text: "Dokumentasi API" },
   ];
   return (
-    <header className="flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm">
+    <header className="sticky top-0 z-50 flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm">
       <Link href="/" className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-md bg-[#192f26] flex items-center justify-center">
           <Image src="/logo-finsight.svg" alt="FinSight" width={26} height={26} />

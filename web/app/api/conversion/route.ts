@@ -14,7 +14,15 @@ interface CacheItem {
 const CACHE_DURATION_MS = 60 * 1000; // 1 minute cache
 const rateCache: Record<string, CacheItem> = {};
 
+import { validateRequest } from "@/lib/auth";
+
 export async function GET(request: NextRequest) {
+    // Auth Check
+    const auth = validateRequest(request);
+    if (!auth.isValid) {
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const from = searchParams.get("from");
     const to = searchParams.get("to");

@@ -3,7 +3,15 @@ const pkg = require("yahoo-finance2");
 const YahooFinance = pkg.default || pkg;
 const yahooFinance = new YahooFinance();
 
+import { validateRequest } from "@/lib/auth";
+
 export async function GET(request: NextRequest) {
+    // Auth Check
+    const auth = validateRequest(request);
+    if (!auth.isValid) {
+        return NextResponse.json({ error: auth.error }, { status: auth.status });
+    }
+
     const searchParams = request.nextUrl.searchParams;
     const from = searchParams.get("from");
     const to = searchParams.get("to");

@@ -98,9 +98,9 @@ export default function PageKonversiMataUang() {
   // Let's keep it manual trigger for now as per design.
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#0B221E] text-white">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] text-white">
       {/* HEADER */}
-      <header className="flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm">
+      <header className="sticky top-0 z-50 flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm">
         <Link href="/" className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-md bg-[#192f26] flex items-center justify-center">
             <Image src="/logo-finsight.svg" alt="FinSight" width={26} height={26} />
@@ -129,7 +129,7 @@ export default function PageKonversiMataUang() {
         </div>
 
         {/* KARTU KONVERSI */}
-        <Card className="bg-[#102E2A] border-none max-w-2xl mx-auto p-6 text-white">
+        <Card className="bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] max-w-2xl mx-auto p-6 text-white">
           <CardContent>
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-xl font-semibold">Konversi Sekarang!</h3>
@@ -236,7 +236,7 @@ export default function PageKonversiMataUang() {
               <Button
                 onClick={handleConvert}
                 disabled={loading}
-                className="bg-[#f0c94e] text-black font-semibold hover:bg-[#d4b43a] disabled:opacity-50"
+                className="bg-[#f0c94e] text-black font-semibold hover:bg-[#f0c94e]/90 disabled:opacity-50"
               >
                 {loading ? "Memproses..." : "Konversikan"}
               </Button>
@@ -260,7 +260,7 @@ export default function PageKonversiMataUang() {
               ))}
             </div>
           </div>
-          <div className="bg-[#102E2A] p-4 rounded-xl max-w-3xl mx-auto">
+          <div className="bg-[#102E2A] shadow-[0_0_30px_rgba(0,0,0,0.3)] p-4 rounded-xl max-w-3xl mx-auto">
             {chartData.length > 0 ? (
               <ResponsiveContainer width="100%" height={250}>
                 <LineChart data={chartData}>
