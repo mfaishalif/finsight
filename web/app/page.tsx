@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -36,6 +36,14 @@ const miniChartData = [
   { month: 'Apr', value: 16551.50 },
   { month: 'May', value: 16520 },
   { month: 'Jun', value: 16580 },
+];
+
+const currencies = [
+  { code: "USD", name: "United States Dollar", flag: "/flags/us.svg" },
+  { code: "AUD", name: "Australian Dollar", flag: "/flags/au.svg" },
+  { code: "JPY", name: "Japanese Yen", flag: "/flags/jp.svg" },
+  { code: "MYR", name: "Malaysian Ringgit", flag: "/flags/my.svg" },
+  { code: "IDR", name: "Indonesian Rupiah", flag: "/flags/id.svg" },
 ];
 
 const mainChartData = [
@@ -74,8 +82,8 @@ const miniChartConfig = {
 };
 
 const HeroSection = () => {
-  const CURRENCY_FROM = "USD";
-  const CURRENCY_TO = "IDR";
+  const [currencyFrom, setCurrencyFrom] = useState("USD");
+  const [currencyTo, setCurrencyTo] = useState("IDR");
   const PREDICTED_PRICE_CHANGE_PERCENTAGE = "+1.15%";
 
   return (
@@ -94,43 +102,85 @@ const HeroSection = () => {
                 <div>
                   <span className="text-sm font-medium text-[#f0c94e]">Pilih Negara</span>
                   <div className="flex items-center gap-2 mt-1">
-                    <Select defaultValue={CURRENCY_FROM}>
-                      <SelectTrigger className="w-[100px]">
-                        <SelectValue placeholder="From" />
+                    <Select value={currencyFrom} onValueChange={setCurrencyFrom}>
+                      <SelectTrigger className="w-[130px] bg-[#102E2A] text-white border border-white/20">
+                        <div className="flex items-center gap-2">
+                          <Image
+                            src={currencies.find(c => c.code === currencyFrom)?.flag || "/flags/us.svg"}
+                            alt={currencyFrom}
+                            width={20}
+                            height={15}
+                            className="rounded-sm"
+                          />
+                          <span>{currencyFrom}</span>
+                        </div>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="USD">USD</SelectItem>
-                        <SelectItem value="EUR">EUR</SelectItem>
+                        {currencies.map((currency) => (
+                          <SelectItem key={currency.code} value={currency.code}>
+                            <div className="flex items-center gap-2">
+                              <Image
+                                src={currency.flag}
+                                alt={currency.code}
+                                width={20}
+                                height={15}
+                                className="rounded-sm"
+                              />
+                              <span>{currency.code}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                     <Globe className="h-5 w-5 text-muted-foreground" />
-                    <Select defaultValue={CURRENCY_TO}>
-                      <SelectTrigger className="w-[100px]">
-                        <SelectValue placeholder="To" />
+                    <Select value={currencyTo} onValueChange={setCurrencyTo}>
+                      <SelectTrigger className="w-[130px] bg-[#102E2A] text-white border border-white/20">
+                        <div className="flex items-center gap-2">
+                          <Image
+                            src={currencies.find(c => c.code === currencyTo)?.flag || "/flags/id.svg"}
+                            alt={currencyTo}
+                            width={20}
+                            height={15}
+                            className="rounded-sm"
+                          />
+                          <span>{currencyTo}</span>
+                        </div>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="IDR">IDR</SelectItem>
-                        <SelectItem value="JPY">JPY</SelectItem>
+                        {currencies.map((currency) => (
+                          <SelectItem key={currency.code} value={currency.code}>
+                            <div className="flex items-center gap-2">
+                              <Image
+                                src={currency.flag}
+                                alt={currency.code}
+                                width={20}
+                                height={15}
+                                className="rounded-sm"
+                              />
+                              <span>{currency.code}</span>
+                            </div>
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
                 <div>
                   <span className="text-sm font-medium text-[#f0c94e]">Periode Waktu</span>
-                  <ToggleGroup type="single" defaultValue="7" variant="outline" className="mt-1">
-                    <ToggleGroupItem value="3">3 Hari</ToggleGroupItem>
-                    <ToggleGroupItem value="7">7 Hari</ToggleGroupItem>
-                    <ToggleGroupItem value="20">20 Hari</ToggleGroupItem>
+                  <ToggleGroup type="single" defaultValue="7" className="mt-1 gap-0 bg-[#102E2A] rounded-md border border-white/20 overflow-hidden">
+                    <ToggleGroupItem value="3" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4 border-r border-white/20">3 Hari</ToggleGroupItem>
+                    <ToggleGroupItem value="7" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4 border-r border-white/20">7 Hari</ToggleGroupItem>
+                    <ToggleGroupItem value="20" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4">20 Hari</ToggleGroupItem>
                   </ToggleGroup>
                 </div>
               </div>
               <div className="flex flex-wrap gap-8">
                 <div>
-                  <p className="text-sm text-[#f0c94e]">Harga ({CURRENCY_TO})</p>
+                  <p className="text-sm text-[#f0c94e]">Harga ({currencyTo})</p>
                   <p className="text-2xl font-semibold">16,551.50</p>
                 </div>
                 <div>
-                  <p className="text-sm text-[#f0c94e]">Prediksi ({CURRENCY_TO})</p>
+                  <p className="text-sm text-[#f0c94e]">Prediksi ({currencyTo})</p>
                   <div className="flex items-center gap-2">
                     <p className="text-2xl font-semibold">16,570.00</p>
                     <Badge variant="outline" className="border-green-500/50 bg-green-500/10 text-green-400 flex items-center gap-1">
@@ -143,7 +193,14 @@ const HeroSection = () => {
             </CardContent>
           </Card>
           <div className="mt-2">
-            <Button size="lg" variant="default" className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90">
+            <Button
+              size="lg"
+              variant="default"
+              className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90"
+              onClick={() => {
+                document.getElementById('visualisasi')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               Lihat Prediksi <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
@@ -186,7 +243,7 @@ const HeroSection = () => {
 
 const VisualizationTabs = () => {
   return (
-    <section className="container mx-auto max-w-7xl px-4 py-16 sm:py-24">
+    <section id="visualisasi" className="container mx-auto max-w-7xl px-4 py-16 sm:py-24">
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold">Visualisasi Data Tren dan Prediksi</h2>
         <p className="mt-4 text-gray-300 max-w-2xl mx-auto">
@@ -196,9 +253,19 @@ const VisualizationTabs = () => {
       <Card className="bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] rounded-xl px-6 pt-8 pb-8 text-white">
         <CardHeader className="flex flex-col items-center p-0">
           <Tabs defaultValue="historical" className="w-full max-w-md">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="historical">Tren Historis</TabsTrigger>
-              <TabsTrigger value="prediction">Prediksi AI</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-2 bg-[#102E2A] border border-white/20 rounded-lg p-1 h-auto">
+              <TabsTrigger
+                value="historical"
+                className="text-white data-[state=active]:bg-[#f0c94e] data-[state=active]:text-black rounded-md py-2 transition-all"
+              >
+                Tren Historis
+              </TabsTrigger>
+              <TabsTrigger
+                value="prediction"
+                className="text-white data-[state=active]:bg-[#f0c94e] data-[state=active]:text-black rounded-md py-2 transition-all"
+              >
+                Prediksi AI
+              </TabsTrigger>
             </TabsList>
           </Tabs>
         </CardHeader>
