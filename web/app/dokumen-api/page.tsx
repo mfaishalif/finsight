@@ -15,13 +15,13 @@ import {
 
 export default function Page() {
   const curlExample1 = `curl -H "x-api-key: finsight-secret-123" \\
-  "http://localhost:3000/api/conversion?from=USD&to=IDR&amount=10"`;
+  "https://finsight-rho-puce.vercel.app/api/conversion?from=USD&to=IDR&amount=10"`;
 
   const curlExample2 = `curl -H "x-api-key: finsight-secret-123" \\
-  "http://localhost:3000/api/history?from=USD&to=IDR&range=1mo"`;
+  "https://finsight-rho-puce.vercel.app/api/history?from=USD&to=IDR&mode=daily"`;
 
   const curlExample3 = `curl -H "x-api-key: finsight-secret-123" \\
-  "http://localhost:3000/api/prediction?symbol=USDIDR=X&mode=daily"`;
+  "https://finsight-rho-puce.vercel.app/api/prediction?symbol=USDIDR=X&mode=daily"`;
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] text-[#ffffff]">
@@ -239,10 +239,15 @@ export default function Page() {
                     <td className="py-2">Ya</td>
                     <td className="py-2">Kode mata uang tujuan</td>
                   </tr>
+                  <tr className="border-b border-[#163125]">
+                    <td className="py-2 font-mono text-[#f0c94e]">mode</td>
+                    <td className="py-2">Opsional*</td>
+                    <td className="py-2"><code>daily</code> atau <code>hourly</code>. (Menggantikan <code>range</code> jika diisi)</td>
+                  </tr>
                   <tr>
                     <td className="py-2 font-mono text-[#f0c94e]">range</td>
-                    <td className="py-2">Tidak</td>
-                    <td className="py-2">Rentang waktu: <code>1w</code>, <code>1mo</code>, <code>3mo</code>, <code>6mo</code>, <code>1y</code> (default: <code>1mo</code>)</td>
+                    <td className="py-2">Opsional</td>
+                    <td className="py-2">Rentang waktu: <code>1w</code>, <code>1mo</code>, <code>3mo</code>, <code>6mo</code>, <code>1y</code> (Dipakai jika mode kosong)</td>
                   </tr>
                 </tbody>
               </table>
@@ -255,7 +260,8 @@ export default function Page() {
   "data": [
     { "date": "2025-12-01", "rate": 16450 },
     { "date": "2025-12-02", "rate": 16480 }
-  ]
+  ],
+  "source": "cache-memory"
 }`}</pre>
             </div>
           </section>
@@ -288,6 +294,17 @@ export default function Page() {
                   </tr>
                 </tbody>
               </table>
+            </div>
+
+            <div className="bg-[#0c2018] p-4 rounded-md text-sm">
+              <strong>Contoh Respons:</strong>
+              <pre className="mt-2 p-3 bg-[#081613] rounded text-xs overflow-x-auto text-green-400">{`{
+  "symbol": "USDIDR=X",
+  "data": [
+    { "timestamp": "2025-12-15T00:00:00", "value": 16500.0 },
+    { "timestamp": "2025-12-16T00:00:00", "value": 16550.0 }
+  ]
+}`}</pre>
             </div>
           </section>
 

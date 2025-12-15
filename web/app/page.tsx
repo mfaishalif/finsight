@@ -419,20 +419,33 @@ const PredictionChart = ({ data, timePeriod, currencyTo }: PredictionChartProps)
   );
 };
 
-const ExportCard = ({ data }: { data: any[] }) => {
+const ExportCard = ({ data, timePeriod }: { data: any[], timePeriod: TimePeriod }) => {
   const handleExport = () => {
-    const headers = ["Date", "Historical Price", "Prediction Price"];
-    const rows = data.map(item => [
-      item.date,
-      item.historical || "",
-      item.prediction || ""
-    ]);
-    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const headers = ["Date", "Historical Price (IDR)", "Prediction Price (IDR)"];
+
+    // Helper to format date consistent with Chart
+    const formatExportDate = (dateRaw: string) => {
+      const d = new Date(dateRaw);
+      if (timePeriod === "24h") return d.toLocaleString('id-ID'); // Full Date + Time for hourly
+      return d.toLocaleDateString('id-ID'); // Date only for daily
+    };
+
+    const rows = data.map(item => {
+      const dateStr = formatExportDate(item.date);
+      const histVal = item.historical !== null ? item.historical : "";
+      const predVal = item.prediction !== null ? item.prediction : "";
+      // Excel friendly number format? Keep raw for calculation or localized? 
+      // Raw is safer for re-import, but user might want readability. 
+      // Let's stick to raw numbers but ensure column alignment.
+      return `"${dateStr}",${histVal},${predVal}`;
+    });
+
+    const csvContent = [headers.join(","), ...rows].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.setAttribute("download", "finsight_export.csv");
+    link.setAttribute("download", `finsight_export_${timePeriod}_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -462,7 +475,6 @@ const ExportCard = ({ data }: { data: any[] }) => {
     </section>
   );
 };
-
 const LearnMoreCard = () => {
   return (
     <section className="container mx-auto px-6 py-16 sm:py-24">
@@ -571,7 +583,6 @@ const Footer = () => {
     </footer>
   );
 };
-
 export default function Homepage() {
   const [currencyFrom, setCurrencyFrom] = useState("USD");
   const [currencyTo, setCurrencyTo] = useState("IDR");
@@ -586,16 +597,12 @@ export default function Homepage() {
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const symbol = `${currencyFrom}${currencyTo}=X`; // Construct symbol e.g., USDIDR=X
+      const symbol = `${currencyFrom}${currencyTo}=X`;
       const mode = timePeriod === "24h" ? "hourly" : "daily";
 
       try {
-        // const BASE_URL = "http://localhost:8000";
         const BASE_URL = "https://mfaishalif-finsight-prediction-api.hf.space";
 
-        // 1. Fetch ML Data (History & Prediction)
-        // Note: History now fetched from Next.js API, Prediction from ML API (FastAPI)
-        // Use local API for history to benefit from caching and consolidation
         const [historyRes, predictRes] = await Promise.all([
           fetch(`/api/history?from=${currencyFrom}&to=${currencyTo}&mode=${mode}`),
           fetch(`${BASE_URL}/predict/${mode}?symbol=${symbol}`)
@@ -604,22 +611,18 @@ export default function Homepage() {
         const historyJson = await historyRes.json();
         const predictData = await predictRes.json();
 
-        // Fix Duplicate Data: The API returns prediction for "Today" (e.g. 15 Dec).
-        // But we inject "Real-Time Price" (also 15 Dec) as the last History point.
-        // This causes two points for "15 Dec" in the chart, creating a flat duplication or gap artifact.
-        // We must remove the first prediction point if it matches today.
         if (predictData.data && predictData.data.length > 0) {
           const todayStr = new Date().toISOString().split('T')[0];
           const firstPredDate = predictData.data[0].timestamp.split('T')[0];
+          // Only remove duplicate if we are injecting real-time data later on same day?
+          // The original logic was removing it. Keep it.
           if (firstPredDate === todayStr) {
-            predictData.data.shift(); // Remove the duplicate start point
+            predictData.data.shift();
           }
         }
 
-        const historyData = historyJson.data || []; // Next.js API returns { data: [...] }
+        const historyData = historyJson.data || [];
 
-        // 2. Fetch Real-Time Conversion Data
-        // Calling local Next.js API
         const conversionRes = await fetch(`/api/conversion?from=${currencyFrom}&to=${currencyTo}&amount=1`);
         const conversionData = await conversionRes.json();
 
@@ -631,17 +634,20 @@ export default function Homepage() {
 
         if (historyJson.error || predictData.detail) {
           console.error("ML API Error");
-          // Still render chart if something partial exists?
-          // For now just error logic or empty
-          // But valid data prevents crash
         }
 
         let finalHistory: any[] = [];
         let finalPrediction: any[] = [];
         let rawPredictions = predictData.data ? predictData.data : [];
 
-        // 1. Process History First (including Injection)
-        const predictionCount = rawPredictions.length; // Use raw count initially
+        // --- FIX: SLICE PREDICTIONS FIRST ---
+        // Ensure we only process the relevant predictions for the selected period
+        if (timePeriod === "3d") rawPredictions = rawPredictions.slice(0, 3);
+        if (timePeriod === "24h") rawPredictions = rawPredictions.slice(0, 24);
+        if (timePeriod === "7d") rawPredictions = rawPredictions.slice(0, 7);
+
+        // 1. Process History (Dynamic Slice based on Sliced Prediction Count)
+        const predictionCount = rawPredictions.length;
         const sliceCount = predictionCount > 0 ? predictionCount : (timePeriod === "24h" ? 24 : 7);
 
         if (Array.isArray(historyData)) {
@@ -655,7 +661,6 @@ export default function Homepage() {
           // INJECTION: Use Real-Time Price
           if (conversionData && conversionData.rate) {
             const realTimeDate = new Date().toISOString().split('T')[0];
-            // Avoid duplicate if history already has today
             const lastHistDate = finalHistory.length > 0 ? finalHistory[finalHistory.length - 1].date : "";
 
             if (lastHistDate !== realTimeDate) {
@@ -665,18 +670,13 @@ export default function Homepage() {
                 prediction: null
               });
             } else {
-              // Update the existing "today" point with real-time data for accuracy
               finalHistory[finalHistory.length - 1].historical = conversionData.rate;
             }
           }
         }
 
         // 2. Process Predictions (Filter Duplicates against History)
-
-        // Existing Slicing Logic
-        if (timePeriod === "3d") rawPredictions = rawPredictions.slice(0, 3);
-        if (timePeriod === "24h") rawPredictions = rawPredictions.slice(0, 24);
-        if (timePeriod === "7d") rawPredictions = rawPredictions.slice(0, 7);
+        // (Slicing already done above)
 
         // Robust Filter: Remove predictions that exist in history
         const historyDates = new Set(finalHistory.map(d => d.date));
@@ -685,7 +685,7 @@ export default function Homepage() {
           return !historyDates.has(pDate);
         });
 
-        // Alignment Logic (restored and adapted)
+        // Alignment Logic
         const currentRate = conversionData?.convertedAmount || (finalHistory.length > 0 ? finalHistory[finalHistory.length - 1].historical : null);
 
         if (rawPredictions.length > 0 && currentRate) {
@@ -704,19 +704,15 @@ export default function Homepage() {
           prediction: item.value
         }));
 
-        // BRIDGE: Connect lines
+        // BRIDGE
         if (finalHistory.length > 0) {
           const lastIdx = finalHistory.length - 1;
           finalHistory[lastIdx].prediction = finalHistory[lastIdx].historical;
-          // Suppress the "prediction" tooltip for this point because it is technically historical
-          // and we only show it to visually connect the lines.
-          // Note: The key must match item.dataKey ("prediction") or item.name
           finalHistory[lastIdx]._suppressTooltip = ["prediction"];
         }
 
         setChartData([...finalHistory, ...finalPrediction]);
 
-        // Update Stats
         if (finalHistory.length > 0) setLatestHistory(finalHistory[finalHistory.length - 1].historical);
         if (finalPrediction.length > 0) setLatestPrediction(finalPrediction[finalPrediction.length - 1].prediction);
 
@@ -744,7 +740,7 @@ export default function Homepage() {
           chartData={chartData}
         />
         <PredictionChart data={chartData} timePeriod={timePeriod} currencyTo={currencyTo} />
-        <ExportCard data={chartData} />
+        <ExportCard data={chartData} timePeriod={timePeriod} />
         <LearnMoreCard />
       </main>
       <Footer />
