@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -130,7 +130,7 @@ function CurrencyCard({ name, code, symbol, flag, desc }: { name: string; code: 
   );
 }
 
-export default function EdukasiPage() {
+function EdukasiContent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRegion, setSelectedRegion] = useState("all");
   const [showMore, setShowMore] = useState(false);
@@ -280,5 +280,13 @@ export default function EdukasiPage() {
 
       <Footer />
     </main>
+  );
+}
+
+export default function EdukasiPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#1f3a32]" />}>
+      <EdukasiContent />
+    </Suspense>
   );
 }
