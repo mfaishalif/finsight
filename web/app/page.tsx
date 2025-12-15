@@ -1,6 +1,5 @@
 "use client";
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import {
@@ -13,6 +12,7 @@ import {
   YAxis,
   ResponsiveContainer,
   Legend,
+  ReferenceLine,
 } from 'recharts';
 import {
   ChartContainer,
@@ -24,19 +24,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { TrendingUp, ArrowRight, ArrowUp, FileCog, Download, Globe } from "lucide-react";
+import { TrendingUp, ArrowRight, ArrowUp, FileCog, Download, Globe, BrainCircuit } from "lucide-react";
+import Header from '@/components/layout/header';
 
-
-const miniChartData = [
-  { month: 'Jan', value: 16400 },
-  { month: 'Feb', value: 16450 },
-  { month: 'Mar', value: 16500 },
-  { month: 'Apr', value: 16551.50 },
-  { month: 'May', value: 16520 },
-  { month: 'Jun', value: 16580 },
-];
+// --- Types & Constants ---
+type TimePeriod = "24h" | "3d" | "7d";
+type CurrencyCode = "USD" | "AUD" | "JPY" | "MYR" | "IDR";
 
 const currencies = [
   { code: "USD", name: "United States Dollar", flag: "/flags/us.svg" },
@@ -46,45 +40,60 @@ const currencies = [
   { code: "IDR", name: "Indonesian Rupiah", flag: "/flags/id.svg" },
 ];
 
-const mainChartData = [
-  { date: '2025-10-01', historical: 16300, prediction: null },
-  { date: '2025-10-02', historical: 16320, prediction: null },
-  { date: '2025-10-03', historical: 16350, prediction: null },
-  { date: '2025-10-04', historical: 16340, prediction: null },
-  { date: '2025-10-05', historical: 16400, prediction: null },
-  { date: '2025-10-06', historical: 16420, prediction: null },
-  { date: '2025-10-07', historical: 16450, prediction: null },
-  { date: '2025-10-08', historical: 16551.50, prediction: 16551.50 },
-  { date: '2025-10-09', historical: null, prediction: 16570 },
-  { date: '2025-10-10', historical: null, prediction: 16590 },
-  { date: '2025-10-11', historical: null, prediction: 16600 },
-  { date: '2025-10-12', historical: null, prediction: 16580 },
-];
+// Helper to format currency
+const formatCurrency = (value: number) =>
+  new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value);
 
-const chartConfig = {
-  historical: {
-    label: 'Harga Historis',
-    color: 'hsl(var(--chart-1))',
-  },
-  prediction: {
-    label: 'Prediksi AI',
-    color: 'hsl(var(--chart-2))',
-  },
+// Helper to format date label
+const formatDateLabel = (dateRaw: string, period: TimePeriod) => {
+  const date = new Date(dateRaw);
+  if (period === "24h") {
+    return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+  }
+  return date.toLocaleDateString('id-ID', { month: 'short', day: 'numeric' });
 };
 
-import Header from '@/components/layout/header';
+// --- Components ---
 
-const miniChartConfig = {
-  value: {
-    label: 'Harga',
-    color: 'hsl(var(--chart-1))',
-  },
-};
+// 1. Hero Section (Controls Lifted)
+interface HeroSectionProps {
+  currencyFrom: string;
+  setCurrencyFrom: (val: string) => void;
+  currencyTo: string;
+  setCurrencyTo: (val: string) => void;
+  timePeriod: TimePeriod;
+  setTimePeriod: (val: TimePeriod) => void;
+  latestPrediction: number | null;
+  latestHistory: number | null;
+  realTimePrice: number | null;
+  chartData: any[];
+}
 
-const HeroSection = () => {
-  const [currencyFrom, setCurrencyFrom] = useState("USD");
-  const [currencyTo, setCurrencyTo] = useState("IDR");
-  const PREDICTED_PRICE_CHANGE_PERCENTAGE = "+1.15%";
+const HeroSection = ({
+  currencyFrom, setCurrencyFrom,
+  currencyTo, setCurrencyTo,
+  timePeriod, setTimePeriod,
+  latestPrediction,
+  latestHistory,
+  realTimePrice,
+  chartData
+}: HeroSectionProps) => {
+
+  // Hitung persentase kenaikan/penurunan
+  // Gunakan realTimePrice sebagai baseline jika ada, jika tidak gunakan latestHistory
+  const baselinePrice = realTimePrice || latestHistory;
+
+  const calculateChange = () => {
+    if (!baselinePrice || !latestPrediction) return "+0.00%";
+    const change = ((latestPrediction - baselinePrice) / baselinePrice) * 100;
+    return `${change > 0 ? '+' : ''}${change.toFixed(2)}%`;
+  };
+
+  const changePercent = calculateChange();
+  const isPositive = changePercent.startsWith('+');
+
+  // Filter data untuk Mini Chart: Hanya tampilkan Prediksi (termasuk titik "Current" sebagai bridge)
+  const predictionOnlyData = chartData.filter(d => d.prediction !== null);
 
   return (
     <section className="bg-linear-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] py-16 sm:py-24">
@@ -167,26 +176,40 @@ const HeroSection = () => {
                 </div>
                 <div>
                   <span className="text-sm font-medium text-[#f0c94e]">Periode Waktu</span>
-                  <ToggleGroup type="single" defaultValue="7" className="mt-1 gap-0 bg-[#102E2A] rounded-md border border-white/20 overflow-hidden">
-                    <ToggleGroupItem value="3" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4 border-r border-white/20">3 Hari</ToggleGroupItem>
-                    <ToggleGroupItem value="7" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4 border-r border-white/20">7 Hari</ToggleGroupItem>
-                    <ToggleGroupItem value="20" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4">20 Hari</ToggleGroupItem>
+                  <ToggleGroup
+                    type="single"
+                    value={timePeriod}
+                    onValueChange={(val) => val && setTimePeriod(val as TimePeriod)}
+                    className="mt-1 gap-0 bg-[#102E2A] rounded-md border border-white/20 overflow-hidden"
+                  >
+                    <ToggleGroupItem value="24h" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4 border-r border-white/20">24 Jam</ToggleGroupItem>
+                    <ToggleGroupItem value="3d" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4 border-r border-white/20">3 Hari</ToggleGroupItem>
+                    <ToggleGroupItem value="7d" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4">7 Hari</ToggleGroupItem>
                   </ToggleGroup>
                 </div>
               </div>
               <div className="flex flex-wrap gap-8">
                 <div>
-                  <p className="text-sm text-[#f0c94e]">Harga ({currencyTo})</p>
-                  <p className="text-2xl font-semibold">16,551.50</p>
+                  <p className="text-sm text-[#f0c94e]">Harga Terkini ({currencyTo})</p>
+                  <p className="text-2xl font-semibold">
+                    {/* Display Real-time price if available, else fallback msg or history */}
+                    {realTimePrice
+                      ? formatCurrency(realTimePrice)
+                      : (latestHistory ? formatCurrency(latestHistory) : "Memuat...")}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-sm text-[#f0c94e]">Prediksi ({currencyTo})</p>
+                  <p className="text-sm text-[#f0c94e]">Prediksi Akhir ({currencyTo})</p>
                   <div className="flex items-center gap-2">
-                    <p className="text-2xl font-semibold">16,570.00</p>
-                    <Badge variant="outline" className="border-green-500/50 bg-green-500/10 text-green-400 flex items-center gap-1">
-                      <ArrowUp className="h-3 w-3" />
-                      {PREDICTED_PRICE_CHANGE_PERCENTAGE}
-                    </Badge>
+                    <p className="text-2xl font-semibold">
+                      {latestPrediction ? formatCurrency(latestPrediction) : "Memuat..."}
+                    </p>
+                    {latestPrediction && (
+                      <Badge variant="outline" className={`border-opacity-50 flex items-center gap-1 ${isPositive ? 'border-green-500 bg-green-500/10 text-green-500' : 'border-red-500 bg-red-500/10 text-red-500'}`}>
+                        {isPositive ? <ArrowUp className="h-3 w-3" /> : <TrendingUp className="h-3 w-3 rotate-180" />}
+                        {changePercent}
+                      </Badge>
+                    )}
                   </div>
                 </div>
               </div>
@@ -201,36 +224,89 @@ const HeroSection = () => {
                 document.getElementById('visualisasi')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              Lihat Prediksi <ArrowRight className="ml-2 h-4 w-4" />
+              Lihat Grafik <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>
-        <Card className="bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] rounded-xl p-6 text-white h-[250px]">
-          <div className="w-full h-full">
-            <ChartContainer config={miniChartConfig} className="w-full h-full">
+        {/* Placeholder Mini Chart - Static for now to match design */}
+        {/* Mini Chart Area */}
+        <Card className="bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] rounded-xl p-6 text-white h-[350px] flex flex-col justify-between overflow-hidden relative">
+          <div className="absolute top-0 right-0 p-6 z-10">
+            <Badge variant="outline" className="bg-[#f0c94e]/10 text-[#f0c94e] border-[#f0c94e]/20">
+              {timePeriod === '24h' ? '24 Hours' : timePeriod === '3d' ? '3 Days' : '7 Days'} Prediction
+            </Badge>
+          </div>
+
+          <div className="mb-4 relative z-10 w-full">
+            <p className="text-sm text-gray-400">Trend Pergerakan</p>
+            <div className="flex items-end gap-2">
+              <span className="text-3xl font-bold">
+                {realTimePrice
+                  ? formatCurrency(realTimePrice)
+                  : latestHistory
+                    ? formatCurrency(latestHistory)
+                    : "IDR ..."}
+              </span>
+            </div>
+          </div>
+
+          <div className="w-full h-full flex-1 min-h-0 relative z-0">
+            <ChartContainer config={{
+              prediction: { label: "Prediction", color: "#f0c94e" },
+            }} className="w-full h-full">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={miniChartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+                <AreaChart data={predictionOnlyData}>
                   <defs>
-                    <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="var(--color-value)" stopOpacity={0.8} />
-                      <stop offset="95%" stopColor="var(--color-value)" stopOpacity={0} />
+                    <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#f0c94e" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="#f0c94e" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <XAxis dataKey="month" tickLine={false} axisLine={false} tick={{ fill: 'white', fontSize: 12 }} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--muted-foreground) / 0.1)" />
+                  <XAxis
+                    dataKey="date"
+                    hide={false}
+                    axisLine={false}
+                    tickLine={false}
+                    tick={{ fill: '#666', fontSize: 10 }}
+                    tickFormatter={(value) => {
+                      const d = new Date(value);
+                      // Jika mode 24h, tampilkan Jam (e.g. 10:00)
+                      // Jika mode 3d/7d, tampilkan Hari (e.g. Bug / Senin)
+                      // Kita bisa cek global state/props timePeriod tapi di sini kita bisa infer
+                      // atau, idealnya kita pass timePeriod ke component ini jika akses langsung sulit.
+                      // Untungnya HeroSection punya akses ke timePeriod.
+                      // Tapi Chart ada di dalam HeroSection, jadi kita bisa akses `timePeriod` (props dari HeroSection)
+
+                      // Note: Kita ada di dalam HeroSection scope? Ya.
+                      if (timePeriod === '24h') {
+                        return d.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                      }
+                      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                    }}
+                    interval="preserveStartEnd"
+                  />
                   <YAxis
+                    hide={false}
+                    orientation="right"
+                    tick={{ fill: '#666', fontSize: 10 }}
                     tickLine={false}
                     axisLine={false}
-                    tickMargin={8}
-                    tickFormatter={(value) => `Rp${(Number(value) / 1000).toFixed(2)}k`}
-                    domain={['dataMin - 100', 'dataMax + 100']}
-                    tick={{ fill: 'white', fontSize: 12 }}
+                    domain={['auto', 'auto']}
+                    tickFormatter={(val) => (val / 1000).toFixed(0) + 'k'}
                   />
                   <ShadcnChartTooltip
-                    cursor={false}
-                    content={<ChartTooltipContent indicator="dot" />}
-                    formatter={(value) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(value as number)}
+                    content={<ChartTooltipContent indicator="dot" hideLabel valueFormatter={formatCurrency} />}
                   />
-                  <Area type="monotone" dataKey="value" stroke="var(--color-value)" fill="url(#colorValue)" strokeWidth={2} />
+                  <Area
+                    type="monotone"
+                    dataKey="prediction"
+                    stroke="#f0c94e"
+                    strokeWidth={2}
+                    fillOpacity={1}
+                    fill="url(#colorPrice)"
+                    connectNulls={true}
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </ChartContainer>
@@ -241,7 +317,25 @@ const HeroSection = () => {
   );
 };
 
-const VisualizationTabs = () => {
+// 2. Prediction Chart (Unified Visualization)
+const chartConfig = {
+  historical: {
+    label: 'Harga Historis',
+    color: '#3b82f6', // Blue for history
+  },
+  prediction: {
+    label: 'Prediksi AI',
+    color: '#f0c94e', // Gold for prediction
+  },
+};
+
+interface PredictionChartProps {
+  data: any[];
+  timePeriod: TimePeriod;
+  currencyTo: string;
+}
+
+const PredictionChart = ({ data, timePeriod, currencyTo }: PredictionChartProps) => {
   return (
     <section id="visualisasi" className="container mx-auto max-w-7xl px-4 py-16 sm:py-24">
       <div className="text-center mb-12">
@@ -251,113 +345,89 @@ const VisualizationTabs = () => {
         </p>
       </div>
       <Card className="bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] rounded-xl px-6 pt-8 pb-8 text-white">
-        <CardHeader className="flex flex-col items-center p-0">
-          <Tabs defaultValue="historical" className="w-full max-w-md">
-            <TabsList className="grid w-full grid-cols-2 bg-[#102E2A] border border-white/20 rounded-lg p-1 h-auto">
-              <TabsTrigger
-                value="historical"
-                className="text-white data-[state=active]:bg-[#f0c94e] data-[state=active]:text-black rounded-md py-2 transition-all"
-              >
-                Tren Historis
-              </TabsTrigger>
-              <TabsTrigger
-                value="prediction"
-                className="text-white data-[state=active]:bg-[#f0c94e] data-[state=active]:text-black rounded-md py-2 transition-all"
-              >
-                Prediksi AI
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-        </CardHeader>
-        <CardContent className="p-0 mt-6">
-          <Tabs defaultValue="historical" className="w-full">
-            <TabsContent value="historical">
-              <div className="h-[400px] w-full">
-                <ChartContainer config={chartConfig} className="w-full h-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={mainChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.5)" />
-                      <XAxis
-                        dataKey="date"
-                        tickLine={false}
-                        axisLine={false}
-                        tickMargin={8}
-                        tickFormatter={(value) => new Date(value).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}
-                        tick={{ fill: 'white', fontSize: 12 }}
-                      />
-                      <YAxis
-                        tickLine={false}
-                        axisLine={false}
-                        tickMargin={8}
-                        tickFormatter={(value) => `Rp${(Number(value) / 1000).toFixed(2)}k`}
-                        domain={['dataMin - 100', 'dataMax + 100']}
-                        tick={{ fill: 'white', fontSize: 12 }}
-                      />
-                      <ShadcnChartTooltip content={<ChartTooltipContent indicator="line" />} />
-                      <Legend />
-                      <Line dataKey="historical" type="monotone" stroke="var(--color-historical)" strokeWidth={2} dot={false} />
-                      <Line dataKey="prediction" type="monotone" stroke="var(--color-prediction)" strokeWidth={2} strokeDasharray="5 5" dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </div>
-            </TabsContent>
-            <TabsContent value="prediction">
-              <div className="h-[400px] w-full">
-                <ChartContainer config={chartConfig} className="w-full h-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={mainChartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                      <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.5)" />
-                      <XAxis
-                        dataKey="date"
-                        tickLine={false}
-                        axisLine={false}
-                        tickMargin={8}
-                        tickFormatter={(value) => new Date(value).toLocaleDateString('id-ID', { month: 'short', day: 'numeric' })}
-                      />
-                      <YAxis
-                        tickLine={false}
-                        axisLine={false}
-                        tickMargin={8}
-                        tickFormatter={(value) => `Rp${(Number(value) / 1000).toFixed(2)}k`}
-                        domain={['dataMin - 100', 'dataMax + 100']}
-                        tick={{ fill: 'white', fontSize: 12 }}
-                      />
-                      <ShadcnChartTooltip content={<ChartTooltipContent indicator="line" />} />
-                      <Legend />
-                      <Line dataKey="historical" type="monotone" stroke="var(--color-historical)" strokeWidth={2} dot={false} />
-                      <Line dataKey="prediction" type="monotone" stroke="var(--color-prediction)" strokeWidth={2} strokeDasharray="5 5" dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </ChartContainer>
-              </div>
-            </TabsContent>
-          </Tabs>
+        <CardContent className="p-0">
+          <div className="h-[400px] w-full">
+            <ChartContainer config={chartConfig} className="w-full h-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="hsl(var(--muted-foreground) / 0.5)" />
+                  <XAxis
+                    dataKey="date"
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={(value) => formatDateLabel(value, timePeriod)}
+                    tick={{ fill: 'white', fontSize: 12 }}
+                    minTickGap={30}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    domain={[
+                      (dataMin: number) => Math.floor(dataMin * 0.999),
+                      (dataMax: number) => Math.ceil(dataMax * 1.001)
+                    ]}
+                    tick={{ fill: 'white', fontSize: 12 }}
+                    tickFormatter={(value) => new Intl.NumberFormat('id-ID', { notation: 'compact', minimumFractionDigits: 1, maximumFractionDigits: 2 }).format(value)}
+                  />
+                  <ShadcnChartTooltip
+                    content={<ChartTooltipContent indicator="line" valueFormatter={formatCurrency} />}
+                    labelFormatter={(value) => formatDateLabel(value, timePeriod)}
+                  />
+                  <Legend verticalAlign="top" height={36} />
+
+                  {/* Garis Historis */}
+                  <Line
+                    dataKey="historical"
+                    type="monotone"
+                    stroke="var(--color-historical)"
+                    strokeWidth={2}
+                    dot={false}
+                    name={`Historis (${currencyTo})`}
+                    connectNulls={false}
+                  />
+
+                  {/* Garis Prediksi */}
+                  <Line
+                    dataKey="prediction"
+                    type="monotone"
+                    stroke="var(--color-prediction)"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    dot={false}
+                    name={`Prediksi AI (${currencyTo})`}
+                    connectNulls={true}
+                  />
+
+                  {/* Garis Vertikal Penanda "Sekarang" */}
+                  {data.length > 0 && (
+                    <ReferenceLine
+                      x={data.findLast(d => d.historical !== null)?.date}
+                      stroke="white"
+                      strokeDasharray="3 3"
+                      label={{ position: 'top', value: 'Sekarang', fill: 'white', fontSize: 12 }}
+                    />
+                  )}
+                </LineChart>
+              </ResponsiveContainer>
+            </ChartContainer>
+          </div>
         </CardContent>
       </Card>
     </section>
   );
 };
 
-const ExportCard = () => {
+const ExportCard = ({ data }: { data: any[] }) => {
   const handleExport = () => {
-    // 1. Header Row
-    const headers = ["Date", "Historical Price (IDR)", "Prediction Price (IDR)"];
-
-    // 2. Data Rows
-    const rows = mainChartData.map(item => [
+    const headers = ["Date", "Historical Price", "Prediction Price"];
+    const rows = data.map(item => [
       item.date,
-      item.historical !== null ? item.historical : "",
-      item.prediction !== null ? item.prediction : ""
+      item.historical || "",
+      item.prediction || ""
     ]);
-
-    // 3. Combine
-    const csvContent = [
-      headers.join(","),
-      ...rows.map(e => e.join(","))
-    ].join("\n");
-
-    // 4. Create Blob and Download
+    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -382,11 +452,7 @@ const ExportCard = () => {
             <p className="text-gray-300 max-w-md">
               Ekspor hasil analisis dan prediksi Anda dalam format CSV untuk laporan atau analisis lebih lanjut.
             </p>
-            <Button
-              variant="default"
-              className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90"
-              onClick={handleExport}
-            >
+            <Button variant="default" className="bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90" onClick={handleExport}>
               <Download className="mr-2 h-4 w-4" />
               Ekspor Data (CSV)
             </Button>
@@ -402,11 +468,16 @@ const LearnMoreCard = () => {
     <section className="container mx-auto px-6 py-16 sm:py-24">
       <Card className="bg-[#102E2A] border-none shadow-[0_0_30px_rgba(0,0,0,0.3)] rounded-xl px-6 pt-8 pb-8 text-white max-w-5xl mx-auto">
         <CardContent className="p-0">
-          <div className="relative z-10 text-center">
-            <h3 className="text-2xl font-bold">Pelajari Bagaimana AI Mengubah Analisis Finansial</h3>
-            <p className="mt-2 text-gray-300 max-w-2xl mx-auto">
-              Temukan teknologi deep learning di balik prediksi kami dan bagaimana Anda dapat memanfaatkannya untuk keuntungan strategis.
-            </p>
+          <div className="flex flex-col items-center gap-4 relative z-10 text-center">
+            <div className="bg-[#f0c94e]/10 rounded-full p-3 w-fit">
+              <BrainCircuit className="h-8 w-8 text-[#f0c94e]" />
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">Pelajari Bagaimana AI Mengubah Analisis Finansial</h3>
+              <p className="mt-2 text-gray-300 max-w-2xl mx-auto">
+                Temukan teknologi deep learning di balik prediksi kami dan bagaimana Anda dapat memanfaatkannya untuk keuntungan strategis.
+              </p>
+            </div>
             <Link href="/tentang">
               <Button variant="default" className="mt-4 px-0 bg-[#f0c94e] text-black hover:bg-[#f0c94e]/90">
                 Baca Selengkapnya <ArrowRight className="ml-2 h-4 w-4" />
@@ -501,15 +572,179 @@ const Footer = () => {
   );
 };
 
-
 export default function Homepage() {
+  const [currencyFrom, setCurrencyFrom] = useState("USD");
+  const [currencyTo, setCurrencyTo] = useState("IDR");
+  const [timePeriod, setTimePeriod] = useState<TimePeriod>("7d");
+
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [latestHistory, setLatestHistory] = useState<number | null>(null);
+  const [latestPrediction, setLatestPrediction] = useState<number | null>(null);
+  const [realTimePrice, setRealTimePrice] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const symbol = `${currencyFrom}${currencyTo}=X`; // Construct symbol e.g., USDIDR=X
+      const mode = timePeriod === "24h" ? "hourly" : "daily";
+
+      try {
+        // const BASE_URL = "http://localhost:8000";
+        const BASE_URL = "https://mfaishalif-finsight-prediction-api.hf.space";
+
+        // 1. Fetch ML Data (History & Prediction)
+        // Note: History now fetched from Next.js API, Prediction from ML API (FastAPI)
+        // Use local API for history to benefit from caching and consolidation
+        const [historyRes, predictRes] = await Promise.all([
+          fetch(`/api/history?from=${currencyFrom}&to=${currencyTo}&mode=${mode}`),
+          fetch(`${BASE_URL}/predict/${mode}?symbol=${symbol}`)
+        ]);
+
+        const historyJson = await historyRes.json();
+        const predictData = await predictRes.json();
+
+        // Fix Duplicate Data: The API returns prediction for "Today" (e.g. 15 Dec).
+        // But we inject "Real-Time Price" (also 15 Dec) as the last History point.
+        // This causes two points for "15 Dec" in the chart, creating a flat duplication or gap artifact.
+        // We must remove the first prediction point if it matches today.
+        if (predictData.data && predictData.data.length > 0) {
+          const todayStr = new Date().toISOString().split('T')[0];
+          const firstPredDate = predictData.data[0].timestamp.split('T')[0];
+          if (firstPredDate === todayStr) {
+            predictData.data.shift(); // Remove the duplicate start point
+          }
+        }
+
+        const historyData = historyJson.data || []; // Next.js API returns { data: [...] }
+
+        // 2. Fetch Real-Time Conversion Data
+        // Calling local Next.js API
+        const conversionRes = await fetch(`/api/conversion?from=${currencyFrom}&to=${currencyTo}&amount=1`);
+        const conversionData = await conversionRes.json();
+
+        if (conversionData.convertedAmount) {
+          setRealTimePrice(conversionData.convertedAmount);
+        } else {
+          setRealTimePrice(null);
+        }
+
+        if (historyJson.error || predictData.detail) {
+          console.error("ML API Error");
+          // Still render chart if something partial exists?
+          // For now just error logic or empty
+          // But valid data prevents crash
+        }
+
+        let finalHistory: any[] = [];
+        let finalPrediction: any[] = [];
+        let rawPredictions = predictData.data ? predictData.data : [];
+
+        // 1. Process History First (including Injection)
+        const predictionCount = rawPredictions.length; // Use raw count initially
+        const sliceCount = predictionCount > 0 ? predictionCount : (timePeriod === "24h" ? 24 : 7);
+
+        if (Array.isArray(historyData)) {
+          const slicedHistory = historyData.slice(-sliceCount);
+          finalHistory = slicedHistory.map((item: any) => ({
+            date: item.date,
+            historical: item.rate,
+            prediction: null
+          }));
+
+          // INJECTION: Use Real-Time Price
+          if (conversionData && conversionData.rate) {
+            const realTimeDate = new Date().toISOString().split('T')[0];
+            // Avoid duplicate if history already has today
+            const lastHistDate = finalHistory.length > 0 ? finalHistory[finalHistory.length - 1].date : "";
+
+            if (lastHistDate !== realTimeDate) {
+              finalHistory.push({
+                date: realTimeDate,
+                historical: conversionData.rate,
+                prediction: null
+              });
+            } else {
+              // Update the existing "today" point with real-time data for accuracy
+              finalHistory[finalHistory.length - 1].historical = conversionData.rate;
+            }
+          }
+        }
+
+        // 2. Process Predictions (Filter Duplicates against History)
+
+        // Existing Slicing Logic
+        if (timePeriod === "3d") rawPredictions = rawPredictions.slice(0, 3);
+        if (timePeriod === "24h") rawPredictions = rawPredictions.slice(0, 24);
+        if (timePeriod === "7d") rawPredictions = rawPredictions.slice(0, 7);
+
+        // Robust Filter: Remove predictions that exist in history
+        const historyDates = new Set(finalHistory.map(d => d.date));
+        rawPredictions = rawPredictions.filter((p: any) => {
+          const pDate = p.timestamp.split('T')[0];
+          return !historyDates.has(pDate);
+        });
+
+        // Alignment Logic (restored and adapted)
+        const currentRate = conversionData?.convertedAmount || (finalHistory.length > 0 ? finalHistory[finalHistory.length - 1].historical : null);
+
+        if (rawPredictions.length > 0 && currentRate) {
+          const firstPred = rawPredictions[0].value;
+          const offset = currentRate - firstPred;
+
+          rawPredictions = rawPredictions.map((p: any) => ({
+            ...p,
+            value: p.value + offset
+          }));
+        }
+
+        finalPrediction = rawPredictions.map((item: any) => ({
+          date: item.timestamp,
+          historical: null,
+          prediction: item.value
+        }));
+
+        // BRIDGE: Connect lines
+        if (finalHistory.length > 0) {
+          const lastIdx = finalHistory.length - 1;
+          finalHistory[lastIdx].prediction = finalHistory[lastIdx].historical;
+          // Suppress the "prediction" tooltip for this point because it is technically historical
+          // and we only show it to visually connect the lines.
+          // Note: The key must match item.dataKey ("prediction") or item.name
+          finalHistory[lastIdx]._suppressTooltip = ["prediction"];
+        }
+
+        setChartData([...finalHistory, ...finalPrediction]);
+
+        // Update Stats
+        if (finalHistory.length > 0) setLatestHistory(finalHistory[finalHistory.length - 1].historical);
+        if (finalPrediction.length > 0) setLatestPrediction(finalPrediction[finalPrediction.length - 1].prediction);
+
+      } catch (error) {
+        console.error("Failed to fetch data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [currencyFrom, currencyTo, timePeriod]);
+
+
   return (
     <div className="min-h-screen bg-[#0f271f] text-[#ffffff]">
       <Header />
       <main>
-        <HeroSection />
-        <VisualizationTabs />
-        <ExportCard />
+        <HeroSection
+          currencyFrom={currencyFrom} setCurrencyFrom={setCurrencyFrom}
+          currencyTo={currencyTo} setCurrencyTo={setCurrencyTo}
+          timePeriod={timePeriod} setTimePeriod={setTimePeriod}
+          latestHistory={latestHistory} latestPrediction={latestPrediction}
+          realTimePrice={realTimePrice}
+          chartData={chartData}
+        />
+        <PredictionChart data={chartData} timePeriod={timePeriod} currencyTo={currencyTo} />
+        <ExportCard data={chartData} />
         <LearnMoreCard />
       </main>
       <Footer />

@@ -4,7 +4,7 @@ const YahooFinance = pkg.default || pkg;
 const yahooFinance = new YahooFinance();
 
 // URL of the Python ML backend (FastAPI)
-const ML_BACKEND_URL = process.env.ML_API_URL || "http://localhost:8000";
+const ML_BACKEND_URL = process.env.ML_API_URL || "https://mfaishalif-finsight-prediction-api.hf.space";
 
 import { validateRequest } from "@/lib/auth";
 
