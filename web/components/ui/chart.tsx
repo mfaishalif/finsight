@@ -86,13 +86,13 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
             ([theme, prefix]) => `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
-  .map(([key, itemConfig]) => {
-    const color =
-      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
-      itemConfig.color
-    return color ? `  --color-${key}: ${color};` : null
-  })
-  .join("\n")}
+                .map(([key, itemConfig]) => {
+                  const color =
+                    itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
+                    itemConfig.color
+                  return color ? `  --color-${key}: ${color};` : null
+                })
+                .join("\n")}
 }
 `
           )
@@ -115,6 +115,7 @@ function ChartTooltipContent({
   labelFormatter,
   labelClassName,
   formatter,
+  valueFormatter,
   color,
   nameKey,
   labelKey,
@@ -125,6 +126,7 @@ function ChartTooltipContent({
     indicator?: "line" | "dot" | "dashed"
     nameKey?: string
     labelKey?: string
+    valueFormatter?: (value: any) => React.ReactNode
   }) {
   const { config } = useChart()
 
@@ -168,12 +170,12 @@ function ChartTooltipContent({
     return null
   }
 
-  const nestLabel = payload.length === 1 && indicator !== "dot"
+  const nestLabel = false
 
   return (
     <div
       className={cn(
-        "border-border/50 bg-background grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
+        "border-border/50 bg-background text-foreground grid min-w-[8rem] items-start gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs shadow-xl",
         className
       )}
     >
@@ -181,6 +183,18 @@ function ChartTooltipContent({
       <div className="grid gap-1.5">
         {payload
           .filter((item) => item.type !== "none")
+          .filter((item: any) => {
+            // Feature: Suppress specific tooltips per data point
+            // If the data point has _suppressTooltip array, check if this item's key is in it
+            if (item.payload && Array.isArray(item.payload._suppressTooltip)) {
+              if (item.payload._suppressTooltip.includes(item.dataKey) ||
+                item.payload._suppressTooltip.includes(item.name)) {
+                return false;
+              }
+              // Also check lowercase or other variations if needed, but strict match is safer for now
+            }
+            return true;
+          })
           .map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || "value"}`
             const itemConfig = getPayloadConfigFromPayload(config, item, key)
@@ -224,7 +238,7 @@ function ChartTooltipContent({
                     )}
                     <div
                       className={cn(
-                        "flex flex-1 justify-between leading-none",
+                        "flex flex-1 justify-between leading-none gap-2",
                         nestLabel ? "items-end" : "items-center"
                       )}
                     >
@@ -236,7 +250,7 @@ function ChartTooltipContent({
                       </div>
                       {item.value && (
                         <span className="text-foreground font-mono font-medium tabular-nums">
-                          {item.value.toLocaleString()}
+                          {valueFormatter ? valueFormatter(item.value) : item.value.toLocaleString()}
                         </span>
                       )}
                     </div>
@@ -320,8 +334,8 @@ function getPayloadConfigFromPayload(
 
   const payloadPayload =
     "payload" in payload &&
-    typeof payload.payload === "object" &&
-    payload.payload !== null
+      typeof payload.payload === "object" &&
+      payload.payload !== null
       ? payload.payload
       : undefined
 
