@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Header from '@/components/layout/header';
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -25,24 +26,7 @@ export default function Page() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] text-[#ffffff]">
-      {/* Header */}
-      {/* HEADER */}
-      <header className="sticky top-0 z-50 flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-md bg-[#192f26] flex items-center justify-center">
-            <Image src="/logo-finsight.svg" alt="FinSight" width={26} height={26} />
-          </div>
-          <span className="font-semibold text-lg text-white">FinSight</span>
-        </Link>
-
-        <nav className="flex gap-8 text-sm font-medium">
-          <a href="/" className="hover:text-[#f0c94e]">Home Page</a>
-          <a href="/tentang" className="hover:text-[#f0c94e]">Tentang</a>
-          <a href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</a>
-          <a href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</a>
-          <a href="#" className="underline decoration-[#c9a93b] text-[#f0c94e]">Dokumentasi API</a>
-        </nav>
-      </header>
+      <Header />
 
       {/* Hero */}
       <section className="bg-linear-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] py-20">
@@ -120,7 +104,7 @@ export default function Page() {
       {/* Page content */}
       <div className="mx-auto max-w-6xl px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
         {/* Sidebar */}
-        <aside className="md:col-span-1 bg-[#12251f] rounded-lg p-6 text-sm h-fit sticky top-28">
+        <aside className="md:col-span-1 bg-[#12251f] rounded-lg p-6 text-sm h-fit relative md:sticky md:top-28">
           <ul className="space-y-3 text-[#cfd7c7]">
             <li>
               <a href="#introduction" className="block hover:text-[#f0c94e] transition-colors">Pengenalan API</a>

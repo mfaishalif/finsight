@@ -16,27 +16,7 @@ import {
 } from "lucide-react";
 
 // Komponen Navigasi (diambil dari style kedua)
-function Navbar() {
-  return (
-    <header className="sticky top-0 z-50 flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm text-white">
-      <Link href="/" className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-md bg-[#192f26] flex items-center justify-center">
-          {/* Pastikan /logo-finsight.svg ada di folder /public */}
-          <Image src="/logo-finsight.svg" alt="FinSight" width={26} height={26} />
-        </div>
-        <span className="font-semibold text-lg text-white">FinSight</span>
-      </Link>
-
-      <nav className="flex gap-8 text-sm font-medium">
-        <Link href="/" className="hover:text-[#f0c94e]">Home Page</Link>
-        <Link href="/tentang" className="underline decoration-[#c9a93b] text-[#f0c94e]">Tentang</Link>
-        <Link href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</Link>
-        <Link href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</Link>
-        <Link href="/dokumen-api" className="hover:text-[#f0c94e]">Dokumentasi API</Link>
-      </nav>
-    </header>
-  );
-}
+import Header from "@/components/layout/header";
 
 // Komponen Footer (diambil dari style kedua)
 function Footer() {
@@ -127,7 +107,7 @@ function FeatureCard({ icon, title, description }: FeatureCardProps) {
 export default function TentangPage() {
   return (
     <main className="min-h-screen bg-[#0f271f] text-[#ffffff]">
-      <Navbar />
+      <Header />
 
       {/* Hero Section: Mengenal FinSight Lebih Dekat (style dari file 2) */}
       <section className="relative flex flex-col items-center justify-center text-center py-28 px-4 md:py-40 bg-linear-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19]">

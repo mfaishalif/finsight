@@ -39,26 +39,10 @@ const additionalCurrencies = [
 ];
 
 
-function Navbar() {
-  return (
-    <header className="sticky top-0 z-50 flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm text-white">
-      <Link href="/" className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-md bg-[#192f26] flex items-center justify-center">
-          <Image src="/logo-finsight.svg" alt="FinSight" width={26} height={26} />
-        </div>
-        <span className="font-semibold text-lg text-white">FinSight</span>
-      </Link>
+import Header from '@/components/layout/header';
 
-      <nav className="flex gap-8 text-sm font-medium">
-        <Link href="/" className="hover:text-[#f0c94e]">Home Page</Link>
-        <Link href="/tentang" className="hover:text-[#f0c94e]">Tentang</Link>
-        <Link href="/Edukasi" className="underline decoration-[#c9a93b] text-[#f0c94e]">Edukasi</Link>
-        <Link href="/konversi-mata-uang" className="hover:text-[#f0c94e]">Konversi Mata Uang</Link>
-        <Link href="/dokumen-api" className="hover:text-[#f0c94e]">Dokumentasi API</Link>
-      </nav>
-    </header>
-  );
-}
+
+
 
 function Footer() {
   return (
@@ -174,7 +158,7 @@ function EdukasiContent() {
 
   return (
     <main className="min-h-screen bg-[#1f3a32] text-[#ffffff]">
-      <Navbar />
+      <Header />
 
       <section className="relative flex flex-col items-center justify-center text-center py-16 px-4 md:py-20 bg-gradient-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19]">
         <div className="absolute inset-0 z-0 opacity-20" style={{ backgroundImage: `radial-gradient(at 50% 50%, #1e2e26 0%, transparent 70%)` }}></div>

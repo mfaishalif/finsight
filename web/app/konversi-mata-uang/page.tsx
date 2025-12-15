@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link";
+import Header from "@/components/layout/header"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -100,22 +101,7 @@ export default function PageKonversiMataUang() {
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-b from-[#0f1f19] via-[#14271f] to-[#0f1f19] text-white">
       {/* HEADER */}
-      <header className="sticky top-0 z-50 flex items-center justify-between px-12 py-5 bg-[#0E2C27]/80 backdrop-blur-md shadow-sm">
-        <Link href="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-md bg-[#192f26] flex items-center justify-center">
-            <Image src="/logo-finsight.svg" alt="FinSight" width={26} height={26} />
-          </div>
-          <span className="font-semibold text-lg text-white">FinSight</span>
-        </Link>
-
-        <nav className="flex gap-8 text-sm font-medium">
-          <Link href="/" className="hover:text-[#f0c94e]">Home Page</Link>
-          <Link href="/tentang" className="hover:text-[#f0c94e]">Tentang</Link>
-          <Link href="/Edukasi" className="hover:text-[#f0c94e]">Edukasi</Link>
-          <Link href="/konversi-mata-uang" className="underline decoration-[#c9a93b] text-[#f0c94e]">Konversi Mata Uang</Link>
-          <Link href="/dokumen-api" className="hover:text-[#f0c94e]">Dokumentasi API</Link>
-        </nav>
-      </header>
+      <Header />
 
       {/* MAIN CONTENT */}
       <main className="flex-1 px-6 md:px-16 py-16">
@@ -138,10 +124,10 @@ export default function PageKonversiMataUang() {
               </Button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+            <div className="grid grid-cols-3 md:grid-cols-4 gap-2 md:gap-4 items-center">
               {/* Dropdown Dari */}
               <Select value={fromCurrency} onValueChange={setFromCurrency}>
-                <SelectTrigger className="bg-[#183A34] border-none text-white">
+                <SelectTrigger className="bg-[#183A34] border-none text-white px-2 md:px-3">
                   <div className="flex items-center gap-2">
                     <Image
                       src={currencies.find(c => c.code === fromCurrency)?.flag || "/flags/us.svg"}
@@ -182,8 +168,8 @@ export default function PageKonversiMataUang() {
 
               {/* Dropdown Ke */}
               <Select value={toCurrency} onValueChange={setToCurrency}>
-                <SelectTrigger className="bg-[#183A34] border-none text-white">
-                  <div className="flex items-center gap-2">
+                <SelectTrigger className="bg-[#183A34] border-none text-white px-2 md:px-3">
+                  <div className="flex items-center gap-2 flex-1 justify-end">
                     <Image
                       src={currencies.find(c => c.code === toCurrency)?.flag || "/flags/id.svg"}
                       alt={toCurrency}
@@ -213,7 +199,7 @@ export default function PageKonversiMataUang() {
               </Select>
 
               {/* Hasil Konversi */}
-              <div className="bg-[#183A34] py-2 px-4 rounded-md text-center font-semibold min-h-[40px] flex items-center justify-center">
+              <div className="bg-[#183A34] py-2 px-4 rounded-md text-center font-semibold min-h-[40px] flex items-center justify-center col-span-3 md:col-span-1">
                 {loading ? "..." : result !== null ? new Intl.NumberFormat('id-ID', { maximumFractionDigits: 2 }).format(result) : "-"}
               </div>
             </div>
