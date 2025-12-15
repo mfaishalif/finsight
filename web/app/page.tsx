@@ -168,9 +168,9 @@ const HeroSection = () => {
                 <div>
                   <span className="text-sm font-medium text-[#f0c94e]">Periode Waktu</span>
                   <ToggleGroup type="single" defaultValue="7" className="mt-1 gap-0 bg-[#102E2A] rounded-md border border-white/20 overflow-hidden">
-                    <ToggleGroupItem value="3" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4 border-r border-white/20">3 Hari</ToggleGroupItem>
+                    <ToggleGroupItem value="3" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4 border-r border-white/20">24 Jam</ToggleGroupItem>
                     <ToggleGroupItem value="7" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4 border-r border-white/20">7 Hari</ToggleGroupItem>
-                    <ToggleGroupItem value="20" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4">20 Hari</ToggleGroupItem>
+                    {/* <ToggleGroupItem value="20" className="rounded-none border-none text-white hover:bg-white/10 hover:text-white data-[state=on]:bg-[#f0c94e] data-[state=on]:text-black h-9 px-4">20 Hari</ToggleGroupItem> */}
                   </ToggleGroup>
                 </div>
               </div>
