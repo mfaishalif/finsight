@@ -18,6 +18,7 @@ export function validateRequest(request: NextRequest): { isValid: boolean; error
     if (origin) {
         if (origin.startsWith(INTERNAL_URL)) return { isValid: true };
         if (VERCEL_URL && origin.startsWith(VERCEL_URL)) return { isValid: true };
+        if (origin.endsWith(".vercel.app")) return { isValid: true }; // Robust fallback
         // Allow Vercel preview URLs broadly if strict check fails? 
         // For now, VERCEL_URL logic handles the current deployment.
     }
@@ -25,6 +26,7 @@ export function validateRequest(request: NextRequest): { isValid: boolean; error
     if (referer) {
         if (referer.startsWith(INTERNAL_URL)) return { isValid: true };
         if (VERCEL_URL && referer.startsWith(VERCEL_URL)) return { isValid: true };
+        if (referer.includes(".vercel.app")) return { isValid: true }; // Robust fallback
     }
 
     // 2. External Access Check (API Key)
